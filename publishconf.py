@@ -19,7 +19,7 @@ CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 
 SOCIAL = SOCIAL + (('rss', SITEURL + '/' + FEED_ALL_ATOM),)
 
-DELETE_OUTPUT_DIRECTORY = True
+DELETE_OUTPUT_DIRECTORY = False
 
 # Following items are often useful when publishing
 
