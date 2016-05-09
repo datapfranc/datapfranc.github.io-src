@@ -25,7 +25,7 @@ SITESUBTITLE = u"A site dedicated to experimenting DataPlatform Franchising conc
 SITEURL = ''
 
 PATH = 'content'
-DELETE_OUTPUT_DIRECTORY = True
+DELETE_OUTPUT_DIRECTORY = False
 
 TIMEZONE = 'Europe/Paris'
 
