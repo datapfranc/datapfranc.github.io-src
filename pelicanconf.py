@@ -103,7 +103,7 @@ ADDTHIS_DATA_TRACK_ADDRESSBAR = False
 
 
 ####################### Theme-Specific Settings #########################
-THEME = '../pelican_themes/pelican-bootstrap3'#'html5-dopetrope'
+THEME = 'themes/pelican-bootstrap3'#'html5-dopetrope'
 
 # Pelican Theme-Specific Variables
 BOOTSTRAP_THEME =  'cosmo' # 'simplex' #'sandstone' #'lumen'

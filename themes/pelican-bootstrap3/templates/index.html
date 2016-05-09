@@ -1,0 +1,25 @@
+{% extends "article_list.html" %}
+
+{% block canonical_rel %}<link rel="canonical" href="{{ SITEURL }}">{% endblock %}
+
+{% block banner %}
+<style>
+#banner{
+    background-image:url("{{ BANNER }}");
+}
+body {
+    padding-top: 50px;
+}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<div class="copy">
+			<h1>{{ SITENAME }}</h1>
+			{% if SITESUBTITLE %}
+				<p class="intro">{{ SITESUBTITLE }}</p>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}

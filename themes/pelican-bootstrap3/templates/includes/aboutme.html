@@ -1,0 +1,11 @@
+<div id="aboutme" align="center">
+	<h3 style="margin-bottom:0.5px;">About {{ AUTHOR }}</h3><br/>
+    {% if AVATAR %}
+        <p>
+            <img width="60%" class="img-thumbnail" src="{{ AVATAR }}"/>
+        </p>
+    {% endif %}
+    <p> 
+        {{ ABOUT_ME }}
+    </p>
+</div>
