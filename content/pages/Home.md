@@ -66,6 +66,6 @@ Data consumer will benefit from:
 
 #### Technology vendor
 
-On the front-end side, visualisation and dashboarding analytical tools like [QlikView](qlick.com), [Tableau](tableau.com) and [Looker](looker.com) could showcase their tools by connecting to Cloud-based DataPlatform through standard API and language (JDBC, ODBC, Python DB-API, and SQL).
+On the front-end side, visualisation and dashboarding analytical tools like [QlikView](qlick.com), [Tableau](tableau.com) and [Looker](looker.com) could showcase their capabilities by connecting to Cloud-based DataPlatform through standard API and language (JDBC, ODBC, Python DB-API, and SQL).
 
 On the back-end side, a Cloud-based solution providers like [RedShift](https://aws.amazon.com/redshift/) from Amazon, Azure [SQL Data Warehouse](https://azure.microsoft.com/en-us/services/sql-data-warehouse/) from Microsoft and [Elastic Data Warehouse](http://www.snowflake.net/product/) from Snowflake could be interested in scalability testing with large public-access.
