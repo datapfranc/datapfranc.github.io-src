@@ -12,7 +12,7 @@ The *DataPlatform Franchising* project is dedicated to applying the concept of *
 
 This site is used to document my experimentation and adventures while trying to implement this concept.
 
-### Premise
+## Premise
 
 This project is speculating that DataPlateform**[^footnote]** which give access to cleansed dataset integrating multiple 3rd-party source will become prevalent to many analytical projects. This is considering:
 
@@ -30,7 +30,7 @@ Our dense, interconnected and interdependent world strive for more collaboration
 Refer to [context]({filename}Context.md) for more details.
 
 
-### DataPlatform offering
+## DataPlatform offering
 
 The project is dedicated to create DataPlatform holding interesting dataset. It is dedicated to taking on all Data Preparation work in place of Data Providers as well as visualisation/dashboarding work to offer BI analytics as a self-service to non-expert.
 
@@ -40,9 +40,9 @@ This project is about providing [**r​ich data**](http://www.techradar.com/news
 
 [^footnote]: DataPlatform is a generic term avoiding to debate on BI platform architectures.  Call it data warehouse, datamart, olap cube, star schema, datahub, data lake,.. the main focus is on <u>access</u> not physical design.
 
-### Benefit
+## Benefit
 
-#### Data provider
+### Data provider
 
 Anyone interested in capitalizing on its valuable data asset, but put off by the idea and cost associated with data preparation, hosting service, operation and maintenance.  
 
@@ -55,7 +55,7 @@ Benefits foreseen are:
 * Publish dataset with restricted license to secure collaboration or discover new partnership leads
 * Enhance your own analytics by integrating external data  
 
-#### Data consumer
+### Data consumer
 
 Data consumer will benefit from:
 
@@ -64,7 +64,7 @@ Data consumer will benefit from:
 * Reuse your BI tool investment by connecting them through standard API access
 * Pay only for what you consume
 
-#### Technology vendor
+### Technology vendor
 
 On the front-end side, visualisation and dashboarding analytical tools like [QlikView](qlick.com), [Tableau](tableau.com) and [Looker](looker.com) could showcase their capabilities by connecting to Cloud-based DataPlatform through standard API and language (JDBC, ODBC, Python DB-API, and SQL).
 

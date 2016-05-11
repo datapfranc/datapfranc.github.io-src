@@ -124,13 +124,19 @@ AVATAR = "/images/headshot.png"
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
 DISPLAY_RECENT_POSTS_ON_SIDEBAR = True
 SHOW_ARTICLE_CATEGORY = True
+
+# tags cloud stuff
 TAG_CLOUD_MAX_ITEMS = 8
+DISPLAY_TAGS_INLINE = True
+# TAG_CLOUD_STEPS = 4
+# TAG_CLOUD_SORTING = 'alphabetically'
 
 PYGMENTS_STYLE = 'monokai'
 
 ############################ Plugins ######################################
 PLUGIN_PATHS = ['plugins']
 PLUGINS = ['simple_footnotes', 'extract_toc', 'feed_summary']
+# add 'tag_cloud' if using the full tag stuff: https://github.com/getpelican/pelican-plugins/tree/master/tag_cloud
 FEED_USE_SUMMARY = True
 SUMMARY_MAX_LENGTH = 100
 
