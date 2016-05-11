@@ -1,7 +1,6 @@
-Title: Book Reviews Dataset
-Date: 2016-4-01 11:15
-Tags: BRD, dataset
-Category: BRD
+Title: BRD
+Date: 2016-4-02 11:15
+Tags: BRD
 Slug: brd-intro
 Author: Martin Ouellet
 
@@ -69,13 +68,13 @@ If you choose to participate to BRD, you can also take advantage of BRD data int
 
 ### BRD Data Integration
 
-BRD collects and integrates heterogeneous and mutli-­source dataset into its Cloud­-based solution. All reviews are reported at Work and language level. Work is the main integration point that consolidate reviews assigned to all Books regardless of their editions/translations (whether print, digital or other form). Refer to LT’s Work concept definition.
+BRD collects and integrates heterogeneous and multi-­source dataset into its Cloud­-based solution. All reviews are reported at Work and language level. Work is the main integration point that consolidate reviews assigned to all Books regardless of their editions/translations (whether print, digital or other form). Refer to LT’s Work concept definition.
 
 ### BRD Data Cleansing
 
 BRD applies procedure to cleanse, conform and validate data:
 
-1. Review Data is deduped
+1. Review Data is de-duped
     * Spot reader making same reviews within/across sites
 2. Data Error correction
     * Review with data issues can be flagged/corrected
@@ -84,8 +83,8 @@ BRD applies procedure to cleanse, conform and validate data:
     * Rating are normalized to a 10 point scale to account for full stars only or half­-star
     * Tag can be aggregated across site and report as-­is or reformat to merge similar Tag (case insensitive and singular form)
 
-### BRD status
+### BRD initial steps
 
-Currently, a small percentage of reviews available from listed sites are integrated (roughly 10% of Work held by Librarything).  It should be sufficient to validate the Cloud DW design choice and experiment on some realistic analytic/visualization applications.
+The initial goal is to get enough reviews (maybe 10% of Work from Librarything should) to validate the Cloud DW design choice and produce realistic experimentation with the analytic/visualization applications.
 
-I'll soon contact the site owners for their feedback/interest and also discuss about future interest. Although the data is publicly available, it does not give me legal right to harvest full content of any site.  Among other things, you need to respect site licensing, limit your hitting rate, and consider a lot more issues that I can deal with (ref. the jurisprudence is far from being clear on this aspect).
+I'll soon contact site owners to get their agreement on the harvesting bit. Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest full content of site.  Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that I can deal with... in other words be a [good citizen](https://www.quora.com/Is-website-scraping-legal-and-ethical). 

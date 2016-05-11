@@ -1,8 +1,5 @@
 Date: 2016-04-21 12:43
 Author: Martin Ouellet
-Category: General
-Title: Context
-
 
 ### Presentation
 

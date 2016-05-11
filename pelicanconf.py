@@ -31,7 +31,9 @@ TIMEZONE = 'Europe/Paris'
 
 DEFAULT_LANG = u'en'
 USE_FOLDER_AS_CATEGORY = False
+DISPLAY_CATEGORIES_ON_MENU = False
 DEFAULT_DATE_FORMAT = '%a %d %B %Y'
+
 # when blog has no Date, it will use mdate from file
 DEFAULT_DATE = 'fs'
 # to control whether all files under /pages are diplayed under primary menu (default is True)
@@ -54,7 +56,6 @@ LINKS = (
 # Social widget
 SOCIAL = (('github', 'http://github.com/mart2010'),
           ('linkedin', 'http://linkedin.com/in/martinouellet'),
-          ('google+', 'https://plus.google.com/102425100151107773886/posts'),
           ('Personal blog', 'http://martin-ouellet.blogspot.ch/'),
          )
 
@@ -115,7 +116,7 @@ FAVICON = 'images/favicon.png'
 
 ABOUT_ME = "I'm a business intelligence architect by choice. I enjoy doing backend stuff and data-oriented projects.\
 <p>Find out more about me at <strong><a href=\"http://martin-ouellet.blogspot.ch\" title=\"Personal Archive\">martin-ouellet</a></strong></p>\
-<p>You can also contact me " + """<a href="http://www.googleTOCHANGE.com/recaptcha/mailhide/d?k=01viQ7or9YI4gJ8hto_vDniA==&amp;c=PFSG4q4HL4celXjwzCtAo6YzW_WP9gWcjNfpI6f3Gxw=" onclick="window.open('http://www.google.com/recaptcha/mailhide/d?k\07501viQ7or9YI4gJ8hto_vDniA\75\75\46c\75PFSG4q4HL4celXjwzCtAo6YzW_WP9gWcjNfpI6f3Gxw\075', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;" title="Reveal this e-mail address"><strong>here</strong></a></p>"""
+<p>You can also contact me " + "<a href='mailto:mart2010.l@gmail.com?subject=dataPFranc-feedback'>here</a>"
 AVATAR = "/images/headshot.png"
 
 # dont use banner
@@ -123,19 +124,22 @@ AVATAR = "/images/headshot.png"
 
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
 DISPLAY_RECENT_POSTS_ON_SIDEBAR = True
-SHOW_ARTICLE_CATEGORY = True
+SHOW_ARTICLE_CATEGORY = False
 
 # tags cloud stuff
+DISPLAY_TAGS_ON_SIDEBAR = True
+DISPLAY_TAGS_INLINE = True
+
 TAG_CLOUD_MAX_ITEMS = 8
 DISPLAY_TAGS_INLINE = True
-# TAG_CLOUD_STEPS = 4
-# TAG_CLOUD_SORTING = 'alphabetically'
+TAG_CLOUD_STEPS = 4
+TAG_CLOUD_SORTING = 'alphabetically'
 
 PYGMENTS_STYLE = 'monokai'
 
 ############################ Plugins ######################################
 PLUGIN_PATHS = ['plugins']
-PLUGINS = ['simple_footnotes', 'extract_toc', 'feed_summary']
+PLUGINS = ['simple_footnotes', 'extract_toc', 'feed_summary', 'tag_cloud']
 # add 'tag_cloud' if using the full tag stuff: https://github.com/getpelican/pelican-plugins/tree/master/tag_cloud
 FEED_USE_SUMMARY = True
 SUMMARY_MAX_LENGTH = 100
