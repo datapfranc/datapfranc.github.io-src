@@ -111,7 +111,7 @@ SHOW_ARTICLE_CATEGORY = True
 
 SITELOGO = 'images/logo.png'
 SITELOGO_SIZE = 36
-FAVICON = 'images/favicon.ico'
+FAVICON = 'images/favicon.png'
 
 ABOUT_ME = "I'm a business intelligence architect by choice. I enjoy doing backend stuff and data-oriented projects.\
 <p>Find out more about me at <strong><a href=\"http://martin-ouellet.blogspot.ch\" title=\"Personal Archive\">martin-ouellet</a></strong></p>\
