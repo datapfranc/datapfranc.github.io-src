@@ -1,8 +1,9 @@
-Title: BRD
 Date: 2016-4-02 11:15
+Author: Martin Ouellet
+Title: BRD
 Tags: BRD
 Slug: brd-intro
-Author: Martin Ouellet
+
 
 ### Preamble
 
@@ -87,4 +88,4 @@ BRD applies procedure to cleanse, conform and validate data:
 
 The initial goal is to get enough reviews (maybe 10% of Work from Librarything should) to validate the Cloud DW design choice and produce realistic experimentation with the analytic/visualization applications.
 
-I'll soon contact site owners to get their agreement on the harvesting bit. Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest full content of site.  Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that I can deal with... in other words be a [good citizen](https://www.quora.com/Is-website-scraping-legal-and-ethical). 
+I'll soon contact site owners to get their agreement on the harvesting bit. Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest full content of site.  Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that I can deal with... in other words be a [good citizen](https://www.quora.com/Is-website-scraping-legal-and-ethical).
