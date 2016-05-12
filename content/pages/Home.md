@@ -27,7 +27,7 @@ A single source dataset has very limited use/value by itself... the famous sayin
 5. __A bit of idealism!__
 Our dense, interconnected and interdependent world strive for more collaboration... sharing dataset should prevail over competitive argument!
 
-Refer to [context]({filename}Context.md) for more details.
+Refer to [context]({filename}2-Context.md) for more details.
 
 
 ## DataPlatform offering
