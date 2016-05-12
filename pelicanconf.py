@@ -95,7 +95,7 @@ for k in EXTRA_PATH_METADATA.keys(): # Fix backslash paths to resources if on Wi
 # DISQUS_SHORTNAME = 'datapfran'
 # DISQUS_DISPLAY_COUNTS = True
 
-#GOOGLE_ANALYTICS = "UA-54524020-1" to change
+GOOGLE_ANALYTICS = "UA-49087367-2"
 
 # after creating my Addthis account (using gmail main ..)
 ADDTHIS_PROFILE = 'ra-572cd8ecd555b197'
@@ -108,7 +108,6 @@ THEME = 'themes/pelican-bootstrap3'#'html5-dopetrope'
 
 # Pelican Theme-Specific Variables
 BOOTSTRAP_THEME =  'cosmo' # 'simplex' #'sandstone' #'lumen'
-SHOW_ARTICLE_CATEGORY = True
 
 SITELOGO = 'images/logo.png'
 SITELOGO_SIZE = 36

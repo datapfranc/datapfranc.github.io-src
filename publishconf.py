@@ -23,8 +23,8 @@ DELETE_OUTPUT_DIRECTORY = False
 
 # Following items are often useful when publishing
 
-# DISQUS_SITENAME = "beneathdata"
-# DISQUS_SHORTNAME = "beneathdata"
+# DISQUS_SITENAME = "datapfranc"
+# DISQUS_SHORTNAME = "datapfranc"
 # DISQUS_DISPLAY_COUNTS = True
 
-# GOOGLE_ANALYTICS = "UA-54524020-1"
+GOOGLE_ANALYTICS = "UA-49087367-2"
