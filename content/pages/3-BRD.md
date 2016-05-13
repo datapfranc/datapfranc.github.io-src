@@ -2,14 +2,14 @@ Date: 2016-4-02 11:15
 Author: Martin Ouellet
 Title: BRD
 Tags: BRD
-Slug: brd-intro
+Slug: brd_intro
 
 
 ### Preamble
 
-This introduction post is written as a [recit d'anticipation](https://fr.wikipedia.org/wiki/Anticipation_(fiction)) hopefully predicting the outcome of the first *DataPlatform Franchising* experimentation!
+This introduction is written as a [recit d'anticipation](https://fr.wikipedia.org/wiki/Anticipation_(fiction)) hopefully predicting the outcome of the first *DataPlatform Franchising* experimentation!
 
-Follow-up update at [BRD]({category}BRD).
+Follow-up at [BRD]({category}BRD).
 
 ### BRD: the first DataPlatform Franchising
 
