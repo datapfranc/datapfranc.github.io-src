@@ -11,7 +11,7 @@ To keep on working on any personal project you need motivation, that's a given. 
 
 So what else can bring you lasting motivation? One word: passion!  Working on stuff compatible with personal interest will make work less like work and more like leisure! Personally, I enjoy working on data-oriented projects. So if I can find a subject that is appealing to me, then I'm all well. Like most people, there are a lot of subjects I find interesting, but the challenge is to find one where data content can be easily acquired and integrated inside a database.
 
-While procrastinating on book reviews sites, it hit me... that's it, I had found it, [BRD]({filename}../Home.md) was just born!  Although I would not qualify myself as a literary person, I enjoy reading books especially after I stumble upon excellent [reviews](https://www.librarything.com/profile_reviews.php?view=arouse77) or [one](https://www.goodreads.com/review/show/9230871?book_show_action=true&from_review_page=1) as sublime as the book itself.
+While procrastinating on book reviews sites, it hit me... that's it, I had found it, [BRD]({filename}pages/Home.md) was just born!  Although I would not qualify myself as a literary person, I enjoy reading books especially after I stumble upon excellent [reviews](https://www.librarything.com/profile_reviews.php?view=arouse77) or [one](https://www.goodreads.com/review/show/9230871?book_show_action=true&from_review_page=1) as sublime as the book itself.
 
 
 ### Report on Book review
