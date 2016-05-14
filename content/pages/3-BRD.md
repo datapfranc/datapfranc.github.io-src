@@ -9,7 +9,7 @@ Slug: brd_intro
 
 This introduction is written as a [recit d'anticipation](https://fr.wikipedia.org/wiki/Anticipation_(fiction)) hopefully predicting the outcome of the first *DataPlatform Franchising* experimentation!
 
-Follow-up at [BRD]({category}BRD).
+Link to tag [BRD]({tag}BRD) to follow-up.
 
 ### BRD: the first DataPlatform Franchising
 
@@ -21,14 +21,13 @@ BRD is relevant for many analytical needs from applications such as recommending
 
 * Book explicit and implicit relationships
 * Book reader's social-demographics
-* Review text mining to identify fake reviews, sock-puppet, griefer and troll reviewer
+* Review text mining for identification of fake reviews, sock-puppet, griefer and troll reviewer
 * Book sentiment and opinion analyst and evolution
 * Book recommendation engine and collaborative filtering
 * Book ratings evolution timeline and analysis
-* Book and author characteristics in relation to their number of reviews
-* Book reviews text analysis by applying sophisticated NLP and text mining techniques
+* Book and author characteristics versus reviews
+* Book reviews text analysis through sophisticated NLP and text mining techniques
 * Book preference variation across cultural and language differences
-* etc.
 
 It provides ready-­to-­be­-consumed data :
 
@@ -42,14 +41,14 @@ It provides ready-­to-­be­-consumed data :
 
 It contains over ? millions reviews collected from well known sites (feel free to contact us if you’re running a review’s book site):
 
-1. Librarything.com
-2. Goodreads.com
-3. Amazon.com
+1. [Librarything](librarything.com)
+2. [Goodreads](goodreads.com)
+3. [Amazon](amazon.com)
 4. International Amazon (br, ca, fr, de, in, it, jp, mx, nl, es, uk and au)
-5. Babelio.fr
-6. CritiquesLibres.fr
+5. [Babelio](babelio.fr)
+6. [CritiquesLibres](critiqueslibres.fr)
 
-With BRD, you can start doing analytics on millions of book reviews with no initial investment and get only charged for what you consume!
+With BRD, you can start doing analytics on millions of book reviews without any initial investment!
 
 ### Benefits for website owner
 
@@ -88,4 +87,4 @@ BRD applies procedure to cleanse, conform and validate data:
 
 The initial goal is to get enough reviews (maybe 10% of Work from Librarything should) to validate the Cloud DW design choice and produce realistic experimentation with the analytic/visualization applications.
 
-I'll soon contact site owners to get their agreement on the harvesting bit. Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest full content of site.  Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that I can deal with... in other words be a [good citizen](https://www.quora.com/Is-website-scraping-legal-and-ethical).
+I'll soon contact site owners so they are aware of this experiment and my goal to harvest reviews for around 100K-150K Work.  Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest their sites (*web harvesting is a huge business on Internet, yet no clear jurisprudence still exist*).   Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that are over my head... in other words be a [good citizen](https://www.quora.com/Is-website-scraping-legal-and-ethical).

@@ -1,8 +1,9 @@
-Title: How to do data integration, the BRD example
+Title: How to do data integration, BRD example
 Date: 2016-5-01 11:15
 Tags: BRD, data integration, dataset
 Slug: BRD_DI_part1
 Author: Martin Ouellet
+Status: draft
 Series: BRD-DI
 Series_index: 1
 
@@ -23,8 +24,8 @@ So how should we proceed?
 
 First, we need proper data model for both reference data (book title, authors, isbn...) and review data (rating, text).  There are other important decisions like ETL/pipeline design, data quality, ..but I'll stick to data modeling here. Data modeling is done by 1) identity important business entity (ex. Author, Work, Isbn..), 2) define common entity used for integration along with candidate keys, 3) identify links/relationship between them, 4) identify descriptive attribute, .  
 
-<img src='/images/blog/BRD_model.jpeg' width='100%' alt='Logical Data model'/>
-[Logical Data Model]({filename}/images/blog/BRD_model.jpeg)
+<img src='/images/blog/BRD_model.jpg' width='100%' alt='Logical Data model'/>
+[Logical Data Model]({filename}/images/blog/BRD_model.jpg)
 
 Let's discuss a few aspect.  First, integration is done through common Entity, i.e. Book.  Book is a generic term and we can't afford to be loose especially related to "granularity" of entity.  Amazon records reviews at book edition level, but probably more appropriate to record them at **Work** level ([concept](https://www.librarything.com/concepts)).
 

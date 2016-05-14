@@ -1,8 +1,9 @@
-Title: How to do data integration, the BRD example
+Title: How to do data integration, BRD example (part2)
 Date: 2016-4-01 11:15
 Tags: BRD, data integration, dataset
-Slug: BRD-data-integration_part2
+Slug: BRD_DI_part2
 Author: Martin Ouellet
+Status: draft
 Series: BRD-DI
 Series_index: 2
 
@@ -10,7 +11,7 @@ Series_index: 2
 
 ## Physical Data model
 
-For the physical data model, better let the code speaks for itself.  Although SQL is not well suited for self-documented code, most DB engines support explicit comment.
+For the physical data model, better let the code speaks for itself (although SQL is not well suited for self-documented code, most DB engines support explicit comment).
 
 We can see there are things that  (ex. work_site_mapping), or source data idiosynchracies (work_sameas), etc..  We can observe that a lot more tables exist than our logical model.  That is done purposely to easily accommodate future extension.
 
@@ -54,7 +55,7 @@ create table staging.review (
 comment on table staging.review is 'Review and/or Rating harvested from site';
 comment on column staging.review.work_refid is 'Unique identifier of book (piece of work as ref to lt)';
 comment on column staging.review.dup_refid is 'Duplicate id associated to a "master" work_refid (duplicates exist in lt)';
-comment on column staging.review.work_uid is 'Work id used iby other site; to map with lt''s work_refid during harvest';
+comment on column staging.review.work_uid is 'Work id used by other site; to map with lt''s work_refid during harvest';
 comment on column staging.review.parsed_review_date is 'Parsed date from raw string';
 comment on column staging.review.likes is 'Nb of users liking the review (concept such as likes, green flag)';
 
