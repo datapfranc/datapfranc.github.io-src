@@ -55,6 +55,7 @@ LINKS = (
 
 # Social widget
 SOCIAL = (('github', 'http://github.com/mart2010'),
+          ('twitter', 'https://twitter.com/datapfranc'),
           ('linkedin', 'http://linkedin.com/in/martinouellet'),
           ('Personal blog', 'http://martin-ouellet.blogspot.ch/'),
          )

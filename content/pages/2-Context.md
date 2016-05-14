@@ -20,7 +20,7 @@ In the realm of ​Business Intelligence​ and Data Warehousing, this trend did
 
 ### Data Deluge
 
-We have apparently entered a data-centric era where decision taking will be data-driven! Meanwhile, in recent years we have seen the emergence of new source of data originating from social media, connected device, Internet of Thing, machine-generated log, etc.  This phenomenon qualified as [​data deluge](http://www.economist.com/node/15579717) has not only created its own buzzwords (​**Big Data**​, **​NoSQL**​, **​Data Science**​ and **​Predictive Analytics​**..), but clearly been disruptive in terms of data type (semi­structured and unstructured), volume and velocity. They have also challenged the relevance and adaptability of traditional BI solutions designed around data generated from OLTP (operational system)​ implying structured data type and manageable data volume.
+We have apparently entered a data-centric era where decision taking will be data-driven! Meanwhile, in recent years we have seen the emergence of new source of data originating from social media, connected device, Internet of Thing, machine-generated log, etc.  This phenomenon qualified as [​data deluge](http://www.economist.com/node/15579717) has not only created its own buzzwords (​**Big Data**​, **​NoSQL**​, **​Data Science**​, **​Predictive Analytics​**, ..), but clearly been disruptive in terms of data type (semi­structured and unstructured), volume and velocity. They have also challenged the relevance and adaptability of traditional BI solutions designed around data generated from OLTP (operational system)​ implying structured data type and manageable data volume.
 
 ### New Tools
 
