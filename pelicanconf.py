@@ -114,7 +114,7 @@ SITELOGO = 'images/logo.png'
 SITELOGO_SIZE = 36
 FAVICON = 'images/favicon.png'
 
-ABOUT_ME = "I'm a business intelligence architect by choice. I enjoy doing backend stuff and data-oriented projects.\
+ABOUT_ME = "I'm a data architect by choice. I enjoy doing backend stuff and data-oriented projects.\
 <p>Find out more about me at <strong><a href=\"http://martin-ouellet.blogspot.ch\" title=\"Personal Archive\">martin-ouellet</a></strong></p>\
 <p>You can also contact me " + "<a href='mailto:mart2010.l@gmail.com?subject=dataPFranc-feedback'>here</a>"
 AVATAR = "/images/headshot_2.jpg"

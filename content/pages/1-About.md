@@ -4,7 +4,7 @@ Title: About
 
 ### About me
 
-I am a business intelligence architect by choice. I enjoy most sport involving a fair level of effort and suffering, but never refuse a relax and fun vacation with my family.  Writing in english is somewhat tedious, but not much harder than in my mother's tongue.  I've specialized in the database world (conservative) currently facing competitive challenges (disruptive). Trying to stay on the edge by learning new technology -NoSQL-, new programming language -Python- and surfing the -data-is-the-new-oil- wave! I also blog (read archive) about my professional knowledge, and from time to time, personal experience at [Anything but a blog](http://martin-ouellet.blogspot.com).   
+I am a data architect by choice. I enjoy most sport involving a fair level of effort and suffering, but never refuse a relax and fun vacation with my family.  Writing in english is somewhat tedious, but not much harder than in my mother's tongue.  I've specialized in the database world (conservative) currently facing competitive challenges (disruptive). Trying to stay on the edge by learning new technology -NoSQL-, new programming language -Python- and surfing the -data-is-the-new-oil- wave! I also blog (read archive) about my professional knowledge, and from time to time, personal experience at [Anything but a blog](http://martin-ouellet.blogspot.com).   
 
 ### About this website
 
