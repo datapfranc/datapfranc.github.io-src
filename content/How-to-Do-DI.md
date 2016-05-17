@@ -1,5 +1,5 @@
 Title: How to do data integration, BRD example
-Date: 2016-5-01 11:15
+Date: 2016-4-01 11:15
 Tags: BRD, data integration, dataset
 Slug: BRD_DI_part1
 Author: Martin Ouellet

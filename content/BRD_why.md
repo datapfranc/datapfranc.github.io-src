@@ -16,7 +16,7 @@ While procrastinating on book reviews sites, it hit me... that's it, I had found
 
 ### Report on Book review
 
-I'm not sure these book reviews are very valuable by themselves... but they are certainly interesting and fun to read!  What report or questions could we get from a BRD dataset?  Here are a few thoughts:
+I'm not sure how valuable these book reviews are by themselves... but they are certainly interesting and fun to read!  What sort of questions could we get from a BRD dataset?  Here are some thoughts:
 
 1. Trend of rating in time
 2. Reader appreciation in terms of their demographics
@@ -24,15 +24,15 @@ I'm not sure these book reviews are very valuable by themselves... but they are 
 4. Reviews/rating statistics difference per site
 5. Finding same or similar reviews and reviewer
 
-There are certainly many more I can't envision at this time. We'll see how it turns out.
+There are certainly many more I can't envision at this time.
 
 ### Next steps
 
-To make this happen, I need to work on quite a few things: 1) design a data model, 2) develop pipeline from harvesting step to loading into a database, 3) setting up the DB and pipeline workflow environment, 4) define and implement visualization tool, 5) define the backend Cloud provider, etc.    
+To make this happen, I need to work on quite a few things: 1) design a data model, 2) develop pipeline from harvesting step to loading into a database, 3) setting up the DB and pipeline workflow environment, 4) define and implement visualization tool, 5) define the backend Cloud provider, etc.
 
 Technology wise, here are some libraries/tools I'll be using:
 
-* Postgres for the DB (planning to store the integration data myself and not in Cloud)
+* Postgres for the DB (planning to store integration data locally and not in Cloud)
 * [Luigi](https://github.com/spotify/luigi) used as the elt framework (requiring some customization)
 * [Scrapy](scrapy.org) for the web harvesting bit
 * Still not sure on the visualization side

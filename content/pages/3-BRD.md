@@ -1,7 +1,6 @@
 Date: 2016-4-02 11:15
 Author: Martin Ouellet
 Title: BRD
-Tags: BRD
 Slug: brd_intro
 
 
@@ -85,6 +84,6 @@ BRD applies procedure to cleanse, conform and validate data:
 
 ### BRD initial steps
 
-The initial goal is to get enough reviews (maybe 10% of Work from Librarything should) to validate the Cloud DW design choice and produce realistic experimentation with the analytic/visualization applications.
+The initial goal is to get enough reviews (maybe for 10-15% of Book from Librarything) to validate the Cloud DW design choice and produce realistic experimentation with the analytic/visualization applications.
 
-I'll soon contact site owners so they are aware of this experiment and my goal to harvest reviews for around 100K-150K Work.  Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest their sites (*web harvesting is a huge business on Internet, yet no clear jurisprudence still exist*).   Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that are over my head... in other words be a [good citizen](https://www.quora.com/Is-website-scraping-legal-and-ethical).
+I'll contact site owners so they are aware of this experiment and my intention to harvest reviews for these books.  Although the data is publicly available, it does not give me legal [right](https://www.quora.com/Is-website-scraping-legal-and-ethical) to harvest their sites (*web harvesting is a huge business on Internet, yet no clear [jurisprudence](https://www.quora.com/What-is-the-legality-of-web-scraping) still exist*).   Among other things, you need to respect site licensing, limit your hitting rate, and a lot more issues that are over my head... in other words be a [good citizen](http://programmers.stackexchange.com/questions/91760/how-to-be-a-good-citizen-when-crawling-web-sites).
