@@ -14,7 +14,7 @@ Integration and Presentation are two critical functions of BI and must be decoup
 
 ### Book Reviews: an example of data integration
 
-Let's say I want to report on book reviews/rating done by users of these cool social media sites [librarything](https://librarything.com), [goodreads](https://goodreads.com) or [babelio](http:babelio).  *Note: I enjoy spending time (procrastinating) on these book review sites, so the choice of Book reviews as my first dataset is one of personal interest... which is key to stay motivated in any personal project!*
+Let's say I want to report on book reviews/rating done by users of these cool social media sites [librarything](https://librarything.com), [goodreads](https://goodreads.com) or [babelio](http:babelio).  *Note: I enjoy spending time (procrastinating) on these book review sites, so the choice of Book reviews as a first dataset is one of personal interest... key to stay motivated!*
 
 So how should we proceed?
 
@@ -25,10 +25,9 @@ First, we need proper data model for both reference data (book title, authors, i
 3. identify links/relationship between them
 4. identify descriptive attribute to both entity and relationship
 
-<img src='/images/blog/BRD_model.jpg' width='100%' alt='Logical Data model'/>
-[Logical Data Model]({filename}/images/blog/BRD_model.jpg)
+<img src='/images/blog/BRD_model.jpg' width='65%' alt='Logical Data model'/>
 
-Let's discuss a few aspects.  First, one entity used for integration is obviously 'Book'.  But we cannot integrate based on loosely defined and generic term, so we must precisely define its meaning (grain, identity, ..).  Amazon records reviews at Book edition level, but it is probably more appropriate to record them at **Work** level. Work ([concept](https://www.librarything.com/concepts)) as defined by librarything as a single piece of work irrespective of translations, editions and title.  So this is a good choice to consolidate reviews from different languages, culture and small variations of edition .. all essentially pertaining to the same Book.   
+Let's discuss a few aspects.  First, one entity used for integration is obviously 'Book'.  But we cannot integrate based on loosely defined and generic term, so we must have a precise definition (grain, identity, ..).  Amazon records reviews at Book edition level, but it is probably more appropriate to record them at **Work** level. Work ([concept](https://www.librarything.com/concepts)) as defined by librarything as a single piece of work irrespective of translations, editions and title.  So this is a good choice to consolidate reviews from different languages, culture and small variations of edition .. all essentially pertaining to the same Book.   
 
 Next is defining natural-key for Work that will allow us to integrate reviews on same Work across sites. For that, we could choose Work's Title/Author as a composite key and face issues like spelling differences, titles translation, small variation in different editions.. An alternative would be to use [ISBN](http://www.isbn.org/faqs_general_questions) to uniquely identify each editions and use a mapping generously produced by librarything called [thingISBN.xml](http://www.librarything.com/wiki/index.php/LibraryThing_APIs) available for non-commercial use.  This gives list ISBN's with their assignation to same Work entity (yet another social media by-product or collaboration done by the mass).
 
