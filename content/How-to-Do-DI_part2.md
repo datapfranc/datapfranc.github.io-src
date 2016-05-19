@@ -1,6 +1,6 @@
 Title: How to do data integration, BRD example (part2)
 Date: 2016-4-01 11:15
-Tags: BRD, data integration, dataset
+Tags: BRD, data integration
 Slug: BRD_DI_part2
 Author: Martin Ouellet
 Status: draft
@@ -106,9 +106,9 @@ comment on column staging.load_audit.output is 'Output produced by a step like e
 
 ### Integration --Raw Layer
 
-Integration/raw layer is where we ... well integrate data! Behind this pleonasm, integration from multi-source can only happen with common business entities conforming through equivalent identifiers across sources. We've discussed this previously with the choice of ISBN to be used as "anchor" between source.  
+Integration/raw layer is where we ... well integrate data! Behind this pleonasm, integration from multi-source can only happen with common business entities conforming through identifiers across sources. We've discussed this previously with the choice of ISBN to be used as "anchor" between source.
 
-We can also observe the multiplication of tables. During integration, we favor higher normalized structure, but we'll likely change that downstream when it comes time to present the data for reporting purposes.  For example, storing user's attributes into dedicated tables (`user_info`) , so we can later add a bunch or decide to track historical changes (`user_`) without affecting existing structure.
+We can also observe the multiplication of tables. During integration, we favor higher normalized structure, but we'll likely change that downstream when it comes time to present the data for reporting purposes.  For example, storing user's attributes into dedicated tables (`user_info`) , so we can later add a bunch or decide to track historical changes (`user_`) without affecting existing structure.   
 
 ```sql
 ------------------------------------------ Integration layer -------------------------------------------

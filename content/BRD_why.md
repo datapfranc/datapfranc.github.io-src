@@ -1,5 +1,5 @@
 Title: Why Book Review?
-Date: 2016-4-14 11:15
+Date: 2016-3-14 11:15
 Tags: BRD
 Slug: brd_why
 Author: Martin Ouellet
@@ -7,7 +7,7 @@ Author: Martin Ouellet
 
 ### Passion
 
-To keep on working on any personal project you need motivation, that's a given. Without any constraints or external pressure to work on something, what else can help you maintain motivation? Are factors like potential gain, popularity or recognition enough? Answer from personal experience: no.. these probably help at the beginning, but on the long run they'll leave you unfulfilled.
+To keep on working on any personal project you need above all **motivation**.  Without any constraints or external pressure to work on something, what can help you maintain motivation? Are factors like potential gain, popularity or recognition enough? Answer from personal experience: no.. these probably help at the beginning, but on the long run they'll leave you unfulfilled.
 
 So what else can bring you lasting motivation? One word: passion!  Working on stuff compatible with personal interest will make work less like *work* and more like *leisure*! Personally, I enjoy working on data-oriented projects. So if I can find a subject that is appealing to me, then I'm all well. Like most people, there are a lot of subjects I find interesting, but the challenge is to find one where some data content exist out there that can easily be integrated inside a database.
 
@@ -33,7 +33,7 @@ To make this happen, I need to work on quite a few things: 1) design a data mode
 Technology wise, here are some libraries/tools I'll be using:
 
 * Postgres for the DB (planning to store integration data locally and not in Cloud)
-* [Luigi](https://github.com/spotify/luigi) used as the elt framework (requiring some customization)
+* [Luigi](https://github.com/spotify/luigi) used as the elt/pipeline framework (with some customization)
 * [Scrapy](scrapy.org) for the web harvesting bit
 * Still not sure on the visualization side
 * [Python](https://www.python.org) for pretty much all the glue around each component
