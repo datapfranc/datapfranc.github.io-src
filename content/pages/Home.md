@@ -14,7 +14,7 @@ This site is used to document my experimentation and adventures while trying to 
 
 ## Premise
 
-This project is speculating that DataPlateform**[^footnote]** which give access to cleansed dataset integrating multiple 3rd-party source will become prevalent to many analytical projects. This is considering:
+This project is speculating that such DataPlateform**[^footnote]** which give access to cleansed dataset integrated from multiple 3rd-party source will become prevalent to many analytical projects. This is considering:
 
 1. __Data Preparation__
 This is a costly and <u>mandatory</u> step when integrating multi-source data... best left to dedicated and specialized team
@@ -25,10 +25,9 @@ Linear and "infinite" scalability is needed to open analytical capability to a m
 4. __Data asset integration__
 A single source dataset has very limited use/value by itself... the famous saying "The whole is greater than the sum of its parts”
 5. __A bit of idealism!__
-Our dense, interconnected and interdependent world strive for more collaboration... sharing dataset should prevail over competitive argument!
+Modern world is dense, interconnected and interdependent.. striving for more collaboration and sharing dataset should prevail over competitive argument!
 
 Refer to [context]({filename}2-Context.md) for more details.
-
 
 ## DataPlatform offering
 
@@ -38,7 +37,7 @@ It is the place to find LIVE, CLEANSED, STRUCTURED, MODELED, CONSISTENT and INTE
 
 This project is about providing [**r​ich data**](http://www.techradar.com/news/world-of-tech/why-big-data-is-crude-oil-while-rich-data-is-refined-and-the-ultimate-in-bi-1289628) and not only big data!
 
-[^footnote]: DataPlatform is a generic term avoiding to debate on BI platform architectures.  Call it data warehouse, datamart, olap cube, star schema, datahub, data lake,.. the main focus is on <u>access</u> not physical design.
+[^footnote]: DataPlatform generic term is chosen to avoid debating on BI platform architectures.  Call it data warehouse, datamart, olap cube, star schema, datahub, data lake,.. the main focus is on <u>access</u> not physical design.
 
 ## Benefit
 
@@ -68,4 +67,4 @@ Data consumer will benefit from:
 
 On the front-end side, visualisation and dashboarding analytical tools like [QlikView](qlick.com), [Tableau](tableau.com) and [Looker](looker.com) could showcase their capabilities by connecting to Cloud-based DataPlatform through standard API and language (JDBC, ODBC, Python DB-API, and SQL).
 
-On the back-end side, a Cloud-based solution providers like [RedShift](https://aws.amazon.com/redshift/) from Amazon, Azure [SQL Data Warehouse](https://azure.microsoft.com/en-us/services/sql-data-warehouse/) from Microsoft and [Elastic Data Warehouse](http://www.snowflake.net/product/) from Snowflake could be interested in scalability testing with large public-access.
+On the back-end side, a Cloud-based solution providers like [Redshift](https://aws.amazon.com/redshift/) from Amazon, Azure [SQL Data Warehouse](https://azure.microsoft.com/en-us/services/sql-data-warehouse/) from Microsoft and [Elastic Data Warehouse](http://www.snowflake.net/product/) from Snowflake could be interested in scalability testing with large public-access.
