@@ -1,23 +1,21 @@
 Title: How to do data integration, BRD example (part2)
-Date: 2016-4-01 11:15
+Date: 2016-5-21 11:15
 Tags: BRD, data integration
 Slug: BRD_DI_part2
 Author: Martin Ouellet
-Status: draft
 Series: BRD-DI
 Series_index: 2
 
 
-
 ## Physical Data model
 
-First we notice that our physical data model is not a simple map from our high-level logical model, and more tables (than entities) exist. That's a choice by design, and will allow us to extend and grow our model organically as we discover new attributes and new relationship relevant as the experimentation evolve. Interested reader could refer to methods like [Data Vault](https://en.wikipedia.org/wiki/Data_Vault_Modeling) or [Anchor Modeling](http://www.anchormodeling.com/?page_id=2).  
+This post presents the physical data model. Looking back at the [logical model]({filename}How-to-Do-DI.md), we'll see it contains a lot more tables than entities defined. Relational databases are less flexible than schema-less NoSQL environments and highly normalized model is one technique to mitigate rigidity through extension. We accommodate changes by adding new structures as we discover new attributes and relationship relevant to our evolving needs. Interested reader can check methods like [Data Vault](https://en.wikipedia.org/wiki/Data_Vault_Modeling) or [Anchor Modeling](http://www.anchormodeling.com/?page_id=2).
 
-To explain the detail of physical data model, better let the code speaks for itself.  Although SQL is not well suited for self-documented code, most DB engines support explicit comment.
+To explain the detail of physical data model, better let the code speaks for itself.  Although SQL is not well suited for self-documented code, most DB engines support explicit comment in DDL.
 
-### Staging layer
+### Staging sub-layer
 
-This is where data is landing once extracted from source. It is raw (no transformation), volatile (truncated before new load) and designed for speed (bulk loading) to limit impact on system sources. This is also a good place to manage logistics/auditing aspect of loads.
+This is where data is landing once extracted from source. It is raw, volatile (truncated before new load) and designed for speed (bulk loading) to limit impact on system sources. This is also a good place to manage logistics/auditing aspect of loads.
 
 ```sql
 ------------------------------------------ Staging layer -----------------------------------------------
@@ -104,26 +102,17 @@ comment on column staging.load_audit.run_dts is 'Timestamp when step run (useful
 comment on column staging.load_audit.output is 'Output produced by a step like error msg when failure or additional info';
 ```
 
-### Integration --Raw Layer
+### Integration (raw) Layer
 
-Integration/raw layer is where we ... well integrate data! Behind this pleonasm, integration from multi-source can only happen with common business entities conforming through identifiers across sources. We've discussed this previously with the choice of ISBN to be used as "anchor" between source.
+Integration is where we ... integrate data! Behind this pleonasm, integration from multi-source is only possible with common business entities conforming through same identifiers. We've discussed this previously with the choice of ISBN to be used as "anchor" point across source.
 
-We can also observe the multiplication of tables. During integration, we favor higher normalized structure, but we'll likely change that downstream when it comes time to present the data for reporting purposes.  For example, storing user's attributes into dedicated tables (`user_info`) , so we can later add a bunch or decide to track historical changes (`user_`) without affecting existing structure.   
+We can see all dedicated tables like `user_info` or `work_info` (normalized) that store user or work attributes.  This will allow us to add stuff later on or decide to track historical changes without affecting existing structure.   
 
 ```sql
------------------------------------------- Integration layer -------------------------------------------
---------------------------------------------------------------------------------------------------------
--- Two sub-layers:
---          - 1) Raw sub-layer: untransformed data from source without applying business rules
---          - 2) Business sub-layer: apply some transformation to help preparing for presentation layer
---                    2.1) de-duplication (same_as for work, user, review, etc...)
---                    2.2) any sort of standardization/harmonization...
---
---------------------------------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------------------
--------------------------------------- Raw Sub-layer -------------------------------------
-------------------------------------------------------------------------------------------
+---------------------------------- Integration layer -------------------------------------------
+------------------------------------------------------------------------------------------------
+-- Raw -layer: untransformed data from source without applying business rules
+------------------------------------------------------------------------------------------------
 create table integration.site (
     id int primary key,
     logical_name text unique,
@@ -285,50 +274,6 @@ create table integration.work_title (
 comment on table integration.work_title is 'Title of work in different language edition';
 comment on column integration.work_title.lang_text is 'Language is used as PK and preserve so we spot missing language ref';
 
-create table integration.mds (
-    code text primary key,
-    code_w_dot text,
-    mds_text text,
-    create_dts timestamp,
-    load_audit_id int,
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-comment on table integration.mds is 'Melvil decimal system as of lt, but has some issues with Not-Set level';
-comment on column integration.mds.code 'Code corrected (original code truncated based on levels found in text)';
-comment on column integration.mds.code 'Code corrected (original code truncated based on levels found in text)';
-
-create table integration.tag (
-    id uuid primary key,
-    tag text unique,
-    lang_code char(3),
-    tag_upper text,
-    ori_site_id int,
-    create_dts timestamp,
-    load_audit_id int,
-    foreign key(ori_site_id) references integration.site(id),
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-comment on column integration.tag.id is 'Tag unique id derived from md5 hashing of tag';
-comment on column integration.tag.tag is 'Tag text taken verbatim';
-comment on column integration.tag.ori_site_id is 'The site where tag was first harvested';
-comment on column integration.tag.tag_upper is 'Tag capitalized, useful for aggregating similar tag';
-
-create table integration.work_tag (
-    work_refid bigint,
-    tag_id uuid,
-    source_site_id int,
-    frequency int,
-    create_dts timestamp,
-    update_dts timestamp,
-    load_audit_id int,
-    primary key (work_refid, tag_id, source_site_id),
-    foreign key (work_refid) references integration.work(refid),
-    foreign key (tag_id) references integration.tag(id),
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-comment on table integration.work_tag is 'Tag-Work association identified by work, tag and site.  Site composes key in order to preserve relative frequency for site';
-comment on column integration.work_tag.frequency is 'Frequency indicating the importance of the tag for the associated work on the site';
-
 create table integration.user (
     id uuid primary key,
     user_uid text,
@@ -368,46 +313,14 @@ create table integration.review(
 comment on table integration.review is 'Review and/or rating done for a Work in a specific language by a user, with no PK since most sites do not restrict users from reviewing same book multiple times';
 comment on column integration.review.user_id is 'User identifier derived from MD5 hashing of username, site (ref. integration.derive_userid)';
 
--- skipping a few other tables
+-- skipping a few other tables...
 ```
 
-### Integration --Business Layer
+Work_site_mapping table plays an important role in integration. We collect reviews associated to Work from multiple sites, but each have their own work identifier (`work_uid`). After finding these `work_uid` through a look-up of ISBN values, we store them and provide mapping with the Librarything's reference (`work_refid`). We also use this table to keep track of when reviews were last harvested for this site's Work.
 
-Integration/business layer is where we start enriching, relating, correcting, transforming raw data according to business rules that would be too complex to do at presentation layer.  For our specific case, we will fix data issues, like handling Work-id found inside thingISBN.xml but corresponding to duplicates of other id (merged to the same Work). These are discovered during harvesting, as LT website re-directs request made to thee duplicates ids to the "master" work.  
-
-Other data processing is linking very similar reviews together so they can be reported as duplicates and/or used to identify same user (to be discussed in separate post).
+`Work_refid` is thus essential to our integration as many other elements (see above `work`, `reviews`..) are tied to Work using this reference identifier.
 
 ```sql
------------------------------------------------------------------------------------------------
--------------------------------------- Business Sub-layer -------------------------------------
------------------------------------------------------------------------------------------------
-create table integration.work_sameas (
-    work_refid bigint,
-    master_refid bigint,
-    create_dts timestamp,
-    load_audit_id int,
-    primary key (work_refid),
-    foreign key (work_refid) references integration.work(refid),
-    foreign key (master_refid) references integration.work(refid),
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-comment on table integration.work_sameas is 'Different work_refid may exist in lt for same "master" Work';
-comment on column integration.work_sameas.master_refid is 'The "master" work that work_refid refers to';
-
-
--- .. recursive hierarchical relations
-create table integration.mds_parent (
-    code text,
-    parent_code text,
-    create_dts timestamp,
-    load_audit_id int,
-    primary key (code, parent_code),
-    foreign key (code) references integration.mds(code),
-    foreign key (parent_code) references integration.mds(code),
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-
--- Design for all site (except lt) to track down harvesting activity
 create table integration.work_site_mapping(
     work_refid bigint not null,
     work_uid text not null,
@@ -428,42 +341,10 @@ comment on column integration.work_site_mapping.work_refid is 'Reference work id
 comment on column integration.work_site_mapping.work_uid is 'Id used in other site.  Value of -1 means no work found. Values -2 mans more than one id associated to same refid and not wish to tie them to the refid until reviews are found (e.g. asin for AZ) ';
 comment on column integration.work_site_mapping.last_harvest_dts is 'Last time work was harvested';
 comment on column integration.work_site_mapping.title is 'Book title, author, lang are for QA purposes (mapping between sites done through isbn(s) lookup)';
-
-create table integration.review_similarto (
-    rev_id bigint,
-    other_rev_id bigint,
-    similar_index float,
-    same_work_flag boolean,
-    same_author_flag boolean,
-    check (other_rev_id < rev_id),
-    primary key(rev_id, other_rev_id),
-    foreign key(rev_id) references integration.review(id),
-    foreign key(other_rev_id) references integration.review(id),
-    create_dts timestamp,
-    load_audit_id int,
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-
---could be convenient for downstream to store all pair-wise of similar review ??
-comment on table integration.review_similarto is 'To track down reviews with similarity';
-comment on column integration.review_similarto.rev_id is 'Review-id constraint that it is larger than other_rev_id (avoid dup pairwise comparison)'
-comment on column integration.review_similarto.other_rev_id is 'The other similar review-id';
-
-create table integration.user_sameas (
-    user_id uuid not null,
-    same_user_id uuid not null,
-    valid_from timestamp not null,
-    valid_to timestamp,
-    create_dts timestamp,
-    update_dts timestamp,
-    load_audit_id int,
-    primary key (user_id, same_user_id, valid_from),
-    foreign key (user_id) references integration.user(id) on delete cascade,
-    foreign key (same_user_id) references integration.user(id) on delete cascade,
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-
-comment on table integration.user_sameas as 'Store "same-as" user across sites spotted when multiple reviews have very similar text (exact rules TBD)';
-comment on column integration.user_sameas.user_id as 'All user_id in diff sites recognized as same user';
-comment on column integration.user_sameas.same_user_id as 'Flag to identify same user_id (taken arbitrarily)';
 ```
+
+### Consolidation --Business Layer
+
+Next, we'll discuss another (sub)layer called Business.  Here terminology and practice vary much (we may have sub-layer like Business, Semantic, or simply adding components to Presentation layer .), but the important features is that we need to enrich, correct, transform raw data according to our business rules.  And these may be too complex to implement downstream on one shot. From our specific example, in this layer we we'll fix data issues and start creating added-value components useful for Presentation layer.
+
+Let's postpone this on a future post.

@@ -20,7 +20,7 @@ Let's say I want to report on book reviews/rating done by users of these cool so
 
 So how should we proceed?
 
-First, we need proper data model for both reference data (book title, authors, isbn...) and review data (rating, text).  There are other important decisions like ETL/pipeline design, data quality, ..but let's focus on how data  modeling is done:
+We need proper data model for both reference data (book title, authors, isbn...) and review data (rating, text).  There are other important decisions like ETL/pipeline design, data quality, ..but let's focus on how data  modeling is done:
 
 1. identity important business entities (i.e. our core business concept like Author, Work, Tag, Review Isbn..)
 2. define core entities potentially used for integration (with natural-key, like Book's title/author)
@@ -33,7 +33,7 @@ First, we need proper data model for both reference data (book title, authors, i
 
 First we can integration and link reviews through the 'Book' they refer to. For that we need to work with a clear and well specified Book concept.  Amazon records reviews at Book edition level, but it is probably more appropriate to record them at **Work** level. Work ([concept](https://www.librarything.com/concepts)) as defined by librarything is a single piece of work irrespective of translations, editions and title.  So this is a good choice to consolidate reviews from different languages, culture and small variations of edition.. all pertaining to the same Book.   
 
-Next is what natural-key for Work should we use to integrate reviews across sites. We could choose Work's Title/Author as a composite key but this will result in issues like spelling differences, titles translation, small variation in different editions.. An alternative would be to use [ISBN](http://www.isbn.org/faqs_general_questions) to uniquely identify each editions and use a mapping between these ISBN's and the unique Work.  Fortunately, Librarything produces an export called [thingISBN.xml](http://www.librarything.com/wiki/index.php/LibraryThing_APIs) that is available for non-commercial use and does exactly that!  This export list ISBN's along with their assignation to same Work entity (yet another social media by-product or collaboration done by the mass).
+Next step is to decide on which Work's natural-key to use for integrating reviews across sites. We could choose Work's Title/Author as a composite key but this will result in issues like spelling differences, titles translation, small variation in different editions.. An alternative would be to use [ISBN](http://www.isbn.org/faqs_general_questions) to uniquely identify each editions and use a mapping between these ISBN's and the unique Work.  Fortunately, Librarything produces an export called [thingISBN.xml](http://www.librarything.com/wiki/index.php/LibraryThing_APIs) that is available for non-commercial use and does exactly that!  This export list ISBN's along with their assignation to same Work entity (yet another social media by-product or collaboration done by the mass).
 
 So Reviews from any site are harvested by first finding its identifier through a look-up the ISBNs. This implies using Librarything Work identifier as the <u>master</u> data source for Work.
 
