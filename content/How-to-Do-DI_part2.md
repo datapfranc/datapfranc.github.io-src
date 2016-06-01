@@ -6,7 +6,6 @@ Author: Martin Ouellet
 Series: BRD-DI
 Series_index: 2
 
-
 ## Physical Data model
 
 This post presents the physical data model. Looking back at the [logical model]({filename}How-to-Do-DI.md), we'll see it contains a lot more tables than entities defined. Relational databases are less flexible than schema-less NoSQL environments and highly normalized model is one technique to mitigate rigidity through extension. We accommodate changes by adding new structures as we discover new attributes and relationship relevant to our evolving needs. Interested reader can check methods like [Data Vault](https://en.wikipedia.org/wiki/Data_Vault_Modeling) or [Anchor Modeling](http://www.anchormodeling.com/?page_id=2).
@@ -19,11 +18,6 @@ This is where data is landing once extracted from source. It is raw, volatile (t
 
 ```sql
 ------------------------------------------ Staging layer -----------------------------------------------
---------------------------------------------------------------------------------------------------------
--- Goal: - Layer where raw data is bulk loaded from source used by integration ELT steps
---		   - Data is volatile (truncated before each new load)
---       - No transformation or rules are applied on data (taken as-is from source)
---------------------------------------------------------------------------------------------------------
 create table staging.review (
     id bigserial primary key,
     site_logical_name text not null,
@@ -104,15 +98,12 @@ comment on column staging.load_audit.output is 'Output produced by a step like e
 
 ### Integration (raw) Layer
 
-Integration is where we ... integrate data! Behind this pleonasm, integration from multi-source is only possible with common business entities conforming through same identifiers. We've discussed this previously with the choice of ISBN to be used as "anchor" point across source.
+Integration is where we ... integrate data! Behind this pleonasm, integrating multi-source data assumes that common business entities have conformed identifiers across source. We've covered this when we discuss the choice of using ISBN lookup to map Work between sites with the one from Librarything (reference Work-id) which is used as the "anchor" point.
 
-We can see all dedicated tables like `user_info` or `work_info` (normalized) that store user or work attributes.  This will allow us to add stuff later on or decide to track historical changes without affecting existing structure.   
+In the following DDL code, we see the effect of normalization with tables like `user_info`, `work_info` (etc..) that store user or work attributes.  This will allow us to add stuff later on or decide to track historical changes without affecting <u>existing</u> structure.   
 
 ```sql
 ---------------------------------- Integration layer -------------------------------------------
-------------------------------------------------------------------------------------------------
--- Raw -layer: untransformed data from source without applying business rules
-------------------------------------------------------------------------------------------------
 create table integration.site (
     id int primary key,
     logical_name text unique,
@@ -347,4 +338,4 @@ comment on column integration.work_site_mapping.title is 'Book title, author, la
 
 Next, we'll discuss another (sub)layer called Business.  Here terminology and practice vary much (we may have sub-layer like Business, Semantic, or simply adding components to Presentation layer .), but the important features is that we need to enrich, correct, transform raw data according to our business rules.  And these may be too complex to implement downstream on one shot. From our specific example, in this layer we we'll fix data issues and start creating added-value components useful for Presentation layer.
 
-Let's postpone this on a future post.
+Let's postpone this for a future post.
