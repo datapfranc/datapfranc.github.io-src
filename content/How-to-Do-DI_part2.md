@@ -316,9 +316,7 @@ comment on column integration.review.user_id is 'User identifier derived from MD
 -- skipping a few other tables...
 ```
 
-Work_site_mapping table plays an important role in integration. We collect reviews associated to Work from multiple sites, but each have their own work identifier (`work_uid`). After finding these `work_uid` through a look-up of ISBN values, we store them and provide mapping with the Librarything's reference (`work_refid`). We also use this table to keep track of when reviews were last harvested for this site's Work.
-
-`Work_refid` is thus essential to our integration as many other elements (see above `work`, `reviews`..) are tied to Work using this reference identifier.
+Library `Work_refid` is central to integration as many other elements (`work`, `reviews`..) are tied to Work using this identifier. Another important table for integration `Work_site_mapping`. As we collect reviews from different sites, each has their own work identifier (`work_uid`).  We associate these identifiers to the Work through a ISBN look-up, and the mapping with the Librarything's reference (`work_refid`) is kept in this table. We also use it to manage reviews harvesting logistic (cf. `last_harvest_dts`).
 
 ```sql
 create table integration.work_site_mapping(
@@ -343,8 +341,8 @@ comment on column integration.work_site_mapping.last_harvest_dts is 'Last time w
 comment on column integration.work_site_mapping.title is 'Book title, author, lang are for QA purposes (mapping between sites done through isbn(s) lookup)';
 ```
 
-### Consolidation --Business Layer
+### Wrap-up
 
-Next, we'll discuss another (sub)layer called Business.  Here terminology and practice vary much (we may have sub-layer like Business, Semantic, or simply adding components to Presentation layer .), but the important features is that we need to enrich, correct, transform raw data according to our business rules.  And these may be too complex to implement downstream on one shot. From our specific example, in this layer we we'll fix data issues and start creating added-value components useful for Presentation layer.
+This post presented some aspects of the physical data model related to Integration.  Next post, we'll discuss a downstream (sub)layer called Business (*no standard exist and terminology/practice vary much, some will call call it Semantic or Consolidation, and some may simply be adding components directly inside Presentation layer*), where we'll derive new components to enrich, cleanse, conform and transform our raw data. This is done according to our business rules whose implementation may involve complex transformations which justifies the presence of a (sub)layer in-between Integration and Presentation.
 
-Let's postpone this on a future post.
+From our specific example, this is where we'll fix data issues and start creating added-value components useful for Presentation layer.

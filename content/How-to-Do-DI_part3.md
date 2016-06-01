@@ -9,21 +9,123 @@ Series_index: 3
 
 ## Business Layer
 
-As said in previous post, in this layer we start adding and complementing our ^raw data with useful elements needed by our Presentation/Delivery layer. Here we can start fixing data issues, grouping and associating similar entities, applying business rules, etc.
+As introduced in previously, this layer should contain derived data needed by our Presentation/Delivery layer. We can build stuff like associations, groups or hierarchies defined by Business Rules, or also do cleansing to fix data issues found in our *raw data*.  This post looks at two examples of that.
+
+### Building new association: Similar Reviews
+
+Let's say we're required to find similar reviews written on Work. This could be useful for:
+
+* Identify data duplication issues
+* Identify users duplicating reviews within the same site or (most likely) across sites
+* Identify spam or ?? where reviews are done to bias opinion
+* Find plagiarism among the reviewers community
+
+How do we do that?  Data processing done on unstructured text can be done efficiently by NoSQL engines with massively parallel processing capability (MPP).  These engines would leverage a "divide and conquer" strategy by distributing reviews among different cluster nodes while  making sure reviews of same work land on same node (locality ??).  (transform the review text into ?? and easily find N-gram ... . ex. Spark using etc.. related to my course)
+
+This is a good illustration of complementary usage/collaboration between modern NoSQL engine and more traditional RDBMS-based approach.   
+
+However for this demonstration, neither the data volume/rate nor the latency constraint impose the use of MPP-based engines.  We can directly proceed within PostgreSQL by leveraging text comparison functions like tri-gram (see pg_trgm package).
+
+Let's define a working table `rev_similarto_process` that will store all needed review-to-review pair combinations:
+
+```sql
+
+create table integration.rev_similarto_process (
+    work_refid bigint not null,
+    review_id bigint not null,
+    text_length int not null,
+    review_lang char(3),
+    other_review_id bigint,
+    similarity float,
+    date_processed timestamp,
+    create_dts timestamp,
+    load_audit_id int,
+    primary key (work_refid, review_id),
+    check (other_review_id < review_id)
+);
+
+comment on table integration.rev_similarto_process is 'Use to help manage the similar processing reviews (keep all reviews processed or being processed';
+comment on column integration.rev_similarto_process.review_id is 'The review being compared for similarity';
+comment on column integration.rev_similarto_process.other_review_id is 'The other review found to be similar to review (min id if more than one found, or NULL if none is found)';
+comment on column integration.rev_similarto_process.similarity is 'Similarity index between the two reviews using tri-gram (pg_trgm)';
+comment on column integration.rev_similarto_process.date_processed is 'Flag indicating when review comparison was processed (NULL when not yet processed)';
+```
+
+Out of the mXm possible pairs of reviews (assuming there are m reviews for the Work), we don't need to compare each review with
+itself, neither compare twice each same pair.  We only need distinct pair, i.e. binomial m choose 2 combinations.  Using the source `rev_similarto_process`, this would translate into SQL as:
+
+```sql
+select rev.work_refid,
+        ,rev.review_id as id, r.review, r.site_id
+        ,other.review_id as other_id, o.review as other_review, o.site_id as other_site_id
+        ,similarity(r.review, o.review)
+from integration.rev_similarto_process rev
+join integration.review r on (rev.review_id = r.id)
+join integration.rev_similarto_process other on
+          (rev.work_refid = other.work_refid
+          and rev.review_lang = other.review_lang
+          and rev.review_id > other.review_id
+          and rev.text_length between other.text_length - round(other.text_length * %(len_delta)s) and
+                                      other.text_length + round(other.text_length * %(len_delta)s))
+join integration.review o on (other.review_id = o.id)
+where
+  rev.date_processed IS NULL
+  and rev.text_length >= %(len_min)s
+  and other.text_length >= %(len_min)s
+```
+
+Joining review only through `work_refid` this produces a mXm cross-product which is reduced through the clause `and rev.review_id > other.review_id`.  We further reduce pairs by making sure reviews are in same language (`rev.review_lang = other.review_lang`), have similar number of characters (`rev.text_length between other.text_length - round(other.text_length * %(len_delta)s) and  other.text_length + round(other.text_length * %(len_delta)s))`) and finally have a minimum number of characters  (`rev.text_length >= %(len_min)s`) (probably useless to compare "Very Good" and "Excellent!" type of reviews).
+
+Once we calculate similarity of each resulting pairs of reviews, then we can populate the end-result table using a threshold on similarity:
+
+```sql
+create table integration.review_similarto (
+    review_id bigint,
+    other_review_id bigint,
+    similarity float,
+    check (other_review_id < review_id),
+    primary key(review_id, other_review_id),
+    foreign key(review_id) references integration.review(id),
+    foreign key(other_review_id) references integration.review(id),
+    create_dts timestamp,
+    load_audit_id int,
+    foreign key (load_audit_id) references staging.load_audit(id)
+);
+
+comment on table integration.review_similarto is 'Track down reviews having some similarity with others (min threshold on the tri-gram calculation)';
+comment on column integration.review_similarto.review_id is 'Review-id  (under constraint: larger than other_rev_id to avoid dup pairwise comparison)';
+comment on column integration.review_similarto.other_review_id is 'The other similar review-id (take minimum id, if more than one).  If r1, r4, r7 are all similar, then: (r4,r1), (r7,r1)';
+-- Not recursively go back to minimum: If r1 is same as r4 only, and r7 same as r4 --> rows: (r4,r1) and (r7,r4) although the three are probably all similar
+```
+
+Some example of results we have with the similarity tri-gram calculation:
+
+--same meaning but different ordering of words!
+
+--similar but not quite the same (looks like plagiarism?)
 
 
-Data issues :
-handling Work-id found inside thingISBN.xml but corresponding to duplicates of other id (merged to the same Work). These are discovered during harvesting, as LT website re-directs request made to thee duplicates ids to the "master" work.  
+--exact duplication  
+
+I'll write a dedicate post on these results once processing is completed on the sub-set of Reviews harvested.
+
+
+
+
+### Other derived components
+
+Based on the same Reviews derivation, we could also try to find out same users across sites. There is no direct way from our source data to link/merge same user from different sites.  So the indirect way could be to use reviews similarity. Let's say we have a business rules similar to :  *Flag user from different sites as being the same whenever more than x (say 3) reviews are highly similar*. This would be straightforward to implement using the derivations above.
+
+
+TODO: re-travailler...
+We also fix data issues and store in this layer.. An example, is the handling of Work-id found inside thingISBN.xml.  These may correspond to duplicates of other id (merged to the same Work). These are discovered during harvesting, as LT website re-directs request made to thee duplicates ids to the "master" work.  
 
 Other data processing is linking very similar reviews together so they can be reported as duplicates and/or used to identify same user (to be discussed in separate post).
 
+
+Here's the illustration of these (and others) in code:
+
 ```sql
------------------------------------------------------------------------------------------------
--------------------------------------- Business layer -----------------------------------------
---          - 2) Business sub-layer: apply transformation to help preparing for presentation layer
---                 ex.) de-duplication (same_as for work, user, review, etc...)
---                 ex.) any sort of standardization/harmonization...
-------------------------------------------------------------------------------------------------
 
 create table integration.work_sameas (
     work_refid bigint,
@@ -51,23 +153,6 @@ create table integration.mds_parent (
     foreign key (load_audit_id) references staging.load_audit(id)
 );
 
-create table integration.review_similarto (
-    rev_id bigint,
-    other_rev_id bigint,
-    similar_index float,
-    check (other_rev_id < rev_id),
-    primary key(rev_id, other_rev_id),
-    foreign key(rev_id) references integration.review(id),
-    foreign key(other_rev_id) references integration.review(id),
-    create_dts timestamp,
-    load_audit_id int,
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-
---could be convenient for downstream to store all pair-wise of similar review ??
-comment on table integration.review_similarto is 'To track down reviews with similarity';
-comment on column integration.review_similarto.rev_id is 'Review-id constraint that it is larger than other_rev_id (avoid dup pairwise comparison)'
-comment on column integration.review_similarto.other_rev_id is 'The other similar review-id';
 
 create table integration.user_sameas (
     user_id uuid not null,
@@ -87,21 +172,3 @@ comment on table integration.user_sameas as 'Store "same-as" user across sites s
 comment on column integration.user_sameas.user_id as 'All user_id in diff sites recognized as same user';
 comment on column integration.user_sameas.same_user_id as 'Flag to identify same user_id (taken arbitrarily)';
 ```
-
-
-## Linking reviews
-
-There is no direct way from our source data to link/merge same user from different sites.  One (indirect) way, could be to use review raw text and measure their similarity index against each other. We could have received a business rules similar to :  *Flag user from different sites as being the same use whenever more than, say 3 review have similarity close to*.
-
-talk about which distance/algo to use
-
-### Similarity calculation
-
-present the code sql used ...
-
-```sql
-select * from dummy
-```
-
-
-### Result Example
