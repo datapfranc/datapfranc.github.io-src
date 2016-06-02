@@ -8,9 +8,9 @@ Series_index: 2
 
 ## Physical Data model
 
-This post presents the physical data model. Looking back at the [logical model]({filename}How-to-Do-DI.md), we'll see it contains a lot more tables than entities defined. Relational databases are less flexible than schema-less NoSQL environments and highly normalized model is one technique to mitigate rigidity through extension. We accommodate changes by adding new structures as we discover new attributes and relationship relevant to our evolving needs. Interested reader can check methods like [Data Vault](https://en.wikipedia.org/wiki/Data_Vault_Modeling) or [Anchor Modeling](http://www.anchormodeling.com/?page_id=2).
+This post presents the physical data model. Compare to [logical model]({filename}How-to-Do-DI.md), it contains a lot more tables. Relational databases are less flexible than schema-less NoSQL environments and highly normalized model is one technique used to mitigate rigidity through extension. We accommodate changes by adding new structures as we discover new attributes and relationship relevant to our evolving needs. Interested reader can check methods like [Data Vault](https://en.wikipedia.org/wiki/Data_Vault_Modeling) or [Anchor Modeling](http://www.anchormodeling.com/?page_id=2).
 
-To explain the detail of physical data model, better let the code speaks for itself.  Although SQL is not well suited for self-documented code, most DB engines support explicit comment in DDL.
+To explain some details of physical data model, we'll look at the code.  Although SQL is not well suited for self-documented code, most DB engines support explicit comment.
 
 ### Staging sub-layer
 
@@ -98,9 +98,9 @@ comment on column staging.load_audit.output is 'Output produced by a step like e
 
 ### Integration (raw) Layer
 
-Integration is where we ... integrate data! Behind this pleonasm, integrating multi-source data assumes that common business entities have conformed identifiers across source. We've covered this when we discuss the choice of using ISBN lookup to map Work between sites with the one from Librarything (reference Work-id) which is used as the "anchor" point.
+Integration is where we ... integrate data! Behind this pleonasm, integrating multi-source data assumes that common business entities have conformed identifiers across sources. This explains the choice of using ISBN as a lookup to map Work between sites.
 
-In the following DDL code, we see the effect of normalization with tables like `user_info`, `work_info` (etc..) that store user or work attributes.  This will allow us to add stuff later on or decide to track historical changes without affecting <u>existing</u> structure.   
+In the following DDL code, we see the effect of normalization with the creation of many tables like `user_info`, `work_info` (etc..) store user or work attributes.  This allows us to add stuff later on or decide to track historical changes, without affecting <u>existing</u> structure.   
 
 ```sql
 ---------------------------------- Integration layer -------------------------------------------
@@ -307,7 +307,7 @@ comment on column integration.review.user_id is 'User identifier derived from MD
 -- skipping a few other tables...
 ```
 
-Library `Work_refid` is central to integration as many other elements (`work`, `reviews`..) are tied to Work using this identifier. Another important table for integration `Work_site_mapping`. As we collect reviews from different sites, each has their own work identifier (`work_uid`).  We associate these identifiers to the Work through a ISBN look-up, and the mapping with the Librarything's reference (`work_refid`) is kept in this table. We also use it to manage reviews harvesting logistic (cf. `last_harvest_dts`).
+Library `Work_refid` is central to integration as many other elements (`work`, `reviews`..) are tied to Work using this identifier. Another important table for integration is `Work_site_mapping`. As we collect reviews from different sites, each has their own work identifier (`work_uid`).  We associate these identifiers with Work through the ISBN look-up, and keep the mapping with the Librarything's reference (`work_refid`) in this table. We also use it to manage reviews harvesting logistic (cf. `last_harvest_dts`).
 
 ```sql
 create table integration.work_site_mapping(
@@ -334,6 +334,6 @@ comment on column integration.work_site_mapping.title is 'Book title, author, la
 
 ### Wrap-up
 
-This post presented some aspects of the physical data model related to Integration.  Next post, we'll discuss a downstream (sub)layer called Business (*no standard exist and terminology/practice vary much, some will call call it Semantic or Consolidation, and some may simply be adding components directly inside Presentation layer*), where we'll derive new components to enrich, cleanse, conform and transform our raw data. This is done according to our business rules whose implementation may involve complex transformations which justifies the presence of a (sub)layer in-between Integration and Presentation.
+This post presented some aspects of the physical data model related to Data Integration.  Next post, we'll discuss a downstream (sub)layer called Business (*no standard exist and terminology/practice vary much, some will call call it Semantic or Consolidation, and some may simply be adding components directly inside Presentation layer*), where we'll derive new components to enrich, cleanse, conform and transform our raw data. This is done according to our business rules whose implementation may involve complex transformations which justifies the presence of a (sub)layer in-between Integration and Presentation.
 
-From our specific example, this is where we'll fix data issues and start creating added-value components useful to Presentation layer.
+From our specific example, this is where we'll fix data issues and start creating added-value components useful to Presentation.

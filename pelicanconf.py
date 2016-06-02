@@ -139,10 +139,10 @@ PYGMENTS_STYLE = 'monokai'
 
 ############################ Plugins ######################################
 PLUGIN_PATHS = ['plugins']
-PLUGINS = ['simple_footnotes', 'extract_toc', 'feed_summary', 'tag_cloud', 'series']
+PLUGINS = ['simple_footnotes', 'extract_toc', 'feed_summary', 'tag_cloud', 'series', 'bootstrapify']
 # add 'tag_cloud' if using the full tag stuff: https://github.com/getpelican/pelican-plugins/tree/master/tag_cloud
 FEED_USE_SUMMARY = True
 SUMMARY_MAX_LENGTH = 100
 
-MD_EXTENSIONS = ['toc', 'fenced_code', 'codehilite(css_class=highlight)', 'extra']
+MD_EXTENSIONS = ['toc', 'fenced_code', 'tables', 'codehilite(css_class=highlight)', 'extra']
 #MD_EXTENSIONS = ['codehilite(css_class=highlight)', 'extra']

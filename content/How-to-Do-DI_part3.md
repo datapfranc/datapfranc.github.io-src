@@ -1,45 +1,41 @@
 Title: How to do data integration, BRD example (part3)
-Date: 2016-5-24 9:07
+Date: 2016-6-2 9:07
 Tags: BRD, data integration
 Slug: BRD_DI_part3
 Author: Martin Ouellet
-Status: draft
 Series: BRD-DI
 Series_index: 3
 
 ## Business Layer
 
-As mentioned in previous post, this layer should contain derived data needed by our Presentation/Delivery layer. We can build stuff like associations, groups or hierarchies defined by Business Rules, or also do cleansing to fix data issues found in our *raw data*.  This post looks at two examples of that.
+This layer contains derived data needed by Presentation/Delivery layer. We can build components like associations, groupings or hierarchies defined by Business Rules, and also do data cleansing to fix issues found in our *raw data*.  
 
 ### Building new association: Similar Reviews
 
 Let's say we're required to find similar reviews written on Work. This could be useful for:
 
-* Identify data duplication issues
-* Identify users duplicating reviews within the same site or (most likely) across sites
-* Identify spam or ?? where reviews are done to bias opinion
-* Find plagiarism among the reviewers community
+* Identify duplication issues
+* Identify users duplicating reviews within or across sites
+* Identify spam where reviews are written to bias opinion
+* Find plagiarism among reviewers
 
-How do we do that?  Data processing done on unstructured text can be done efficiently by NoSQL engines with massively parallel processing capability (MPP).  These engines would leverage a "divide and conquer" strategy by distributing reviews among different cluster nodes while  making sure reviews of same work land on same node (locality ??).  (transform the review text into ?? and easily find N-gram ... . ex. Spark using etc.. related to my course)
+How do we do that?  Data processing on unstructured text is more efficiently done with NoSQL engines with massively parallel processing capability (MPP).  These engines leverage a "divide and conquer" strategy by distributing reviews among different cluster nodes. This is a good illustration of complementary usage/collaboration between modern NoSQL engine and more traditional RDBMS-based approach.   
 
-
-This is a good illustration of complementary usage/collaboration between modern NoSQL engine and more traditional RDBMS-based approach.   
-
-However for this demonstration, neither the data volume/rate nor the latency constraint impose the use of MPP-based engines.  We can directly proceed within PostgreSQL by leveraging text comparison functions like trigram (see module [pg_trgm](https://www.postgresql.org/docs/current/static/pgtrgm.html)).
+However for this demonstration, neither data volume/rate nor latency constraint impose the use of such MPP-based engines.  We can directly proceed within PostgreSQL by leveraging text comparison functions like trigram (see module [pg_trgm](https://www.postgresql.org/docs/current/static/pgtrgm.html)).
 
 
-> [N-gram](https://en.wikipedia.org/wiki/N-gram) is a way to represent documents as set of sequential items (could b words, letter...).  The trigram is the 3-letters version of the generic n-gram and thus results to a 26^3 dimensional space.  It is shown that two documents with similar n-gram vector-representation are likely to be similar, and consequently this technique has many applications in [NLP](https://en.wikipedia.org/wiki/N-gram#Applications_and_consideration) (e.g. identifying lexically similar documents, detecting plagiarism, ..).  
+> [N-gram](https://en.wikipedia.org/wiki/N-gram) is a way to represent documents as set of sequential items (could b words, letters...).  Trigram is the 3-item version of the generic n-gram and for letters will results to a 26^3 dimensional space.  It's shownmonstrated that two documents with similar n-gram vector-representation are likely to be similar, and consequently this technique has many applications in [NLP](https://en.wikipedia.org/wiki/N-gram#Applications_and_consideration) (e.g. identifying lexically similar documents, detecting plagiarism, ..).  
 
-Here's an example of two reviews from the book _A People's History of the United States_ :
+Here's an example of two reviews done on the book _A People's History of the United States_ :
 
-User-uid  |  Review-date  |  Review text  
-----------|---------------|---------------
-21587504-zeus-polak | 2013-06-25 | This should be required reading for every American.
-14259285-samantha | 2016-02-17 | every american should be required to read this book.
+|User-uid|Review text|
+|:----|:----|
+|21587504-zeus-polak| *This should be required reading for every American.* |
+|14259285-samantha|  *every american should be required to read this book.* |
 
-The similarity index between the two is 0.732143, and correctly reflects the fact that they both convey the same meaning.  The similarity is thus robust in relation to ordering of words!  (to avoid catching too many of these sort we'll filter reviews too short ...as explained next).
+The similarity index between the two is 0.732143. This correctly reflects the fact that both convey the same meaning (robust in relation to ordering of words). However, to avoid catching too many of these small variations of words permutation we'll filter out too short reviews (see below).
 
-#### database implementation
+#### Database implementation
 
 Let's define a working table `rev_similarto_process` that will store all needed review-to-review pair combinations:
 
@@ -65,8 +61,7 @@ comment on column integration.rev_similarto_process.similarity is 'Similarity in
 comment on column integration.rev_similarto_process.date_processed is 'Flag indicating when review comparison was processed (NULL when not yet processed)';
 ```
 
-Out of the mXm possible pairs of reviews (assuming there are m reviews for the Work), we don't need to compare each review with
-itself, neither compare twice each same pair.  We only need distinct pair, i.e. binomial m choose 2 combinations.  Using the source `rev_similarto_process`, this would translate into SQL as:
+Out of the mXm possible pairs of reviews (assuming there are m reviews for the Work), we can ignore the same review pair where review is compared to itself.  We can also avoid comparing twice same pair, so only need distinct pair or combination (binomial coefficients m choose 2). Using the source `rev_similarto_process`, this would translate into SQL as:
 
 ```sql
 select rev.work_refid,
@@ -88,9 +83,9 @@ where
   and other.text_length >= %(len_min)s
 ```
 
-Joining review only through `work_refid` this produces a mXm cross-product which is reduced through the clause `and rev.review_id > other.review_id`.  We further reduce pairs by making sure reviews are in same language (`rev.review_lang = other.review_lang`), have similar number of characters (`rev.text_length between other.text_length - round(other.text_length * %(len_delta)s) and  other.text_length + round(other.text_length * %(len_delta)s))`) and finally have a minimum number of characters  (`rev.text_length >= %(len_min)s`) (probably useless to compare "Very Good" and "Excellent!" type of reviews).
+Joining reviews on `work_refid` produces a mXm cross-product which is reduced by the clause `and rev.review_id > other.review_id`.  We further reduce pairs by keeping reviews of same language (`rev.review_lang = other.review_lang`), with similar number of characters (`rev.text_length between other.text_length - round(other.text_length * %(len_delta)s)` `and  other.text_length + round(other.text_length * %(len_delta)s))`) and finally with a minimum number of characters  (`rev.text_length >= %(len_min)s`) (useless to compare "Very Good" and "Excellent!" type of reviews).
 
-Once we calculate similarity of each resulting pairs of reviews, then we can populate the end-result table using a threshold on similarity:
+We calculate similarity of each pairs and can populate the end-result table using a threshold on similarity:
 
 ```sql
 create table integration.review_similarto (
@@ -106,58 +101,22 @@ create table integration.review_similarto (
     foreign key (load_audit_id) references staging.load_audit(id)
 );
 
-comment on table integration.review_similarto is 'Track down reviews having some similarity with others (min threshold on the tri-gram calculation)';
+comment on table integration.review_similarto is 'Track down reviews having some similarity with others (min threshold on the trigram calculation)';
 comment on column integration.review_similarto.review_id is 'Review-id  (under constraint: larger than other_rev_id to avoid dup pairwise comparison)';
 comment on column integration.review_similarto.other_review_id is 'The other similar review-id (take minimum id, if more than one).  If r1, r4, r7 are all similar, then: (r4,r1), (r7,r1)';
 -- Not recursively go back to minimum: If r1 is same as r4 only, and r7 same as r4 --> rows: (r4,r1) and (r7,r4) although the three are probably all similar
 ```
 
-I'll write a dedicate post on these results once processing of the sub-set of Reviews are completed.
+In presentation layer, this derivation can be used to filter out similar reviews for statistical-based Report or it can be used explicitly to report on these duplicates.
+
+The results so far are interesting...I'll write a dedicate post on these results once harvesting of all sub-set of Reviews is completed.
 
 
 ### Other derived components
 
-Based on the same Reviews derivation, we could also try to find out same users across sites. There is no direct way from our source data to link/merge same user from different sites.  So the indirect way could be to use reviews similarity. Let's say we have a business rules similar to :  *Flag user from different sites as being the same whenever more than x (say 3) reviews are highly similar*. This would be straightforward to implement using the derivations above.
-
-### Data cleansing
-
-TODO: re-travailler...
-We also fix data issues and store in this layer.. An example, is the handling of Work-id found inside thingISBN.xml.  These may correspond to duplicates of other id (merged to the same Work). These are discovered during harvesting, as LT website re-directs request made to thee duplicates ids to the "master" work.  
-
-Other data processing is linking very similar reviews together so they can be reported as duplicates and/or used to identify same user (to be discussed in separate post).
-
-
-Here's the illustration of these (and others) in code:
+From similar Reviews derivation, we could try to identify same users across sites. There is no direct way to identify these from our source data.  A possible (indirect) way could be to use reviews similarity. Let's say we have a business rules like :  *Flag user from different sites as being the same whenever more than x reviews are highly similar*. This would be straightforward to implement using the derivations above.
 
 ```sql
-
-create table integration.work_sameas (
-    work_refid bigint,
-    master_refid bigint,
-    create_dts timestamp,
-    load_audit_id int,
-    primary key (work_refid),
-    foreign key (work_refid) references integration.work(refid),
-    foreign key (master_refid) references integration.work(refid),
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-comment on table integration.work_sameas is 'Different work_refid may exist in lt for same "master" Work';
-comment on column integration.work_sameas.master_refid is 'The "master" work that work_refid refers to';
-
-
--- .. recursive hierarchical relations
-create table integration.mds_parent (
-    code text,
-    parent_code text,
-    create_dts timestamp,
-    load_audit_id int,
-    primary key (code, parent_code),
-    foreign key (code) references integration.mds(code),
-    foreign key (parent_code) references integration.mds(code),
-    foreign key (load_audit_id) references staging.load_audit(id)
-);
-
-
 create table integration.user_sameas (
     user_id uuid not null,
     same_user_id uuid not null,
@@ -175,4 +134,35 @@ create table integration.user_sameas (
 comment on table integration.user_sameas as 'Store "same-as" user across sites spotted when multiple reviews have very similar text (exact rules TBD)';
 comment on column integration.user_sameas.user_id as 'All user_id in diff sites recognized as same user';
 comment on column integration.user_sameas.same_user_id as 'Flag to identify same user_id (taken arbitrarily)';
+
+-- .. recursive hierarchical relations
+create table integration.mds_parent (
+    code text,
+    parent_code text,
+    create_dts timestamp,
+    load_audit_id int,
+    primary key (code, parent_code),
+    foreign key (code) references integration.mds(code),
+    foreign key (parent_code) references integration.mds(code),
+    foreign key (load_audit_id) references staging.load_audit(id)
+);
+```
+
+### Data cleansing
+
+Also relevant here is to fix data issues... One example is related to Work-id loaded from thingISBN.xml export. There are ids that correspond to duplicates of other id (probably later merged to the same Work). These are discovered during harvesting, when Librarything host re-directs request using such duplicate id to a page corresponding to its "master" id. This is stored using the `work_sameas` table:
+
+```sql
+create table integration.work_sameas (
+    work_refid bigint,
+    master_refid bigint,
+    create_dts timestamp,
+    load_audit_id int,
+    primary key (work_refid),
+    foreign key (work_refid) references integration.work(refid),
+    foreign key (master_refid) references integration.work(refid),
+    foreign key (load_audit_id) references staging.load_audit(id)
+);
+comment on table integration.work_sameas is 'Different work_refid may exist in lt for same "master" Work';
+comment on column integration.work_sameas.master_refid is 'The "master" work that work_refid refers to';
 ```

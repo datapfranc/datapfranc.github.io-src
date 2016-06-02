@@ -10,7 +10,7 @@ Series_index: 1
 
 BI environment architecture is often left as an after-thought. Business is pressuring technical teams for delivery, so they quickly jump into designing star schema or dimensional models (the **Presentation Layer**), and neglect the **Integration Layer**.  End result: no separation of concerns will exist between the integration AND presentation aspects.
 
-Integration and Presentation are two critical functions of BI and must be decoupled into separate layers (at least logically) reflecting their independent goals and specifications. Integration is concerned with capturing  raw and untransformed data originating from multiple source, while Presentation applies transformation and business rules to derive information from raw data and structure it to optimize data access. Data in Presentation layer should always be derived from Integration (can be *regenerated* on-demand), whereas data in Integration exists by itself (fact-based) as recorded by source system, consequently cannot be regenerated independently from source.
+Integration and Presentation are critical functions that must be decoupled into separate layers (at least logically) reflecting their independent goals and specifications. Integration is concerned with capturing raw and untransformed data originating from sources, while Presentation applies transformation and business rules to derive information from raw data and optimize its structure for data access. Data in Presentation layer should always be derived from Integration (*regenerated* on-demand), whereas data in Integration exists by itself (fact-based) and recorded by source system (cannot be regenerated independently from source).
 
 This post illustrates through a simple example, how data integration is done. For more on BI architecture principles, you can check out [this](http://essay.utwente.nl/65553/1/Spruijt_MA_School%20of%20Management%20and%20Governance.pdf), or my personal view on [that](http://martin-ouellet.blogspot.ch/2013/08/bi-ideal-platform.html)).
 
@@ -45,9 +45,9 @@ Another integration decision is about **User**. Could we integrate and merge sam
 But users most likely have different username/pseudo so these are not easily merged from raw data. We need more complex business logic and transformation to be implemented (ex. of rules: users with 2 or more highly similar reviews are considered same user). Remember: transformation rules do not belong to Integration layer but more toward Presentation layer.  So let's postpone this transformation (and leave it for future post..) and simply record users as-is from site/username .
 
 
-##Wrap-up
+###Wrap-up
 
-Data Integration layer is critical to BI/Analytic projects. Along the route to Knowledge, everything depends on this layer whose critical role is to capture raw fact-based data!
+Data Integration layer is critical to BI/Analytic projects. Along the path to Knowledge, every derived data depends on the layer capturing raw fact-based data!
 
 Presentation aspects (aka Delivery, Reporting, etc.) should not influence design decisions and modeling aspect of Data Integration layer, but only its data content.
 
