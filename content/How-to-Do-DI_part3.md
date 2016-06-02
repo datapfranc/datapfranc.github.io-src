@@ -9,7 +9,7 @@ Series_index: 3
 
 ## Business Layer
 
-As introduced in previously, this layer should contain derived data needed by our Presentation/Delivery layer. We can build stuff like associations, groups or hierarchies defined by Business Rules, or also do cleansing to fix data issues found in our *raw data*.  This post looks at two examples of that.
+As mentioned in previous post, this layer should contain derived data needed by our Presentation/Delivery layer. We can build stuff like associations, groups or hierarchies defined by Business Rules, or also do cleansing to fix data issues found in our *raw data*.  This post looks at two examples of that.
 
 ### Building new association: Similar Reviews
 
@@ -23,25 +23,27 @@ Let's say we're required to find similar reviews written on Work. This could be 
 How do we do that?  Data processing done on unstructured text can be done efficiently by NoSQL engines with massively parallel processing capability (MPP).  These engines would leverage a "divide and conquer" strategy by distributing reviews among different cluster nodes while  making sure reviews of same work land on same node (locality ??).  (transform the review text into ?? and easily find N-gram ... . ex. Spark using etc.. related to my course)
 
 
-> N-gram is a way to represent documents as set useful to identify similarity between them (trigram version based on 3-letters, will results to a 26^3 dimensional space).  It is shown that two documents with similar vector-representation are likely to be similar, and as such many applications are using this technique (e.g. identifying lexically similar documents, detecting plagiarism, ..).  
+This is a good illustration of complementary usage/collaboration between modern NoSQL engine and more traditional RDBMS-based approach.   
 
-Using BRD'review data, we spotted these two reviews (from book XX) as being similar (similarity=??):
+However for this demonstration, neither the data volume/rate nor the latency constraint impose the use of MPP-based engines.  We can directly proceed within PostgreSQL by leveraging text comparison functions like trigram (see module [pg_trgm](https://www.postgresql.org/docs/current/static/pgtrgm.html)).
+
+
+> [N-gram](https://en.wikipedia.org/wiki/N-gram) is a way to represent documents as set of sequential items (could b words, letter...).  The trigram is the 3-letters version of the generic n-gram and thus results to a 26^3 dimensional space.  It is shown that two documents with similar n-gram vector-representation are likely to be similar, and consequently this technique has many applications in [NLP](https://en.wikipedia.org/wiki/N-gram#Applications_and_consideration) (e.g. identifying lexically similar documents, detecting plagiarism, ..).  
+
+Here's an example of two reviews from the book _A People's History of the United States_ :
 
 User-uid  |  Review-date  |  Review text  
 ----------|---------------|---------------
-rrrr | feb-25-2016 | bla biehfpo uèoj èoiu èpoi öij àlkjè o ¨pojkj èpo èop jénékih èoij
-uuu | feb-26-2016 | bla biehfpo uèoj èoiu èpoi öij àlkjè o ¨pojkj èpo èop jénékih èoij
+21587504-zeus-polak | 2013-06-25 | This should be required reading for every American.
+14259285-samantha | 2016-02-17 | every american should be required to read this book.
 
+The similarity index between the two is 0.732143, and correctly reflects the fact that they both convey the same meaning.  The similarity is thus robust in relation to ordering of words!  (to avoid catching too many of these sort we'll filter reviews too short ...as explained next).
 
-
-This is a good illustration of complementary usage/collaboration between modern NoSQL engine and more traditional RDBMS-based approach.   
-
-However for this demonstration, neither the data volume/rate nor the latency constraint impose the use of MPP-based engines.  We can directly proceed within PostgreSQL by leveraging text comparison functions like tri-gram (see pg_trgm package).
+#### database implementation
 
 Let's define a working table `rev_similarto_process` that will store all needed review-to-review pair combinations:
 
 ```sql
-
 create table integration.rev_similarto_process (
     work_refid bigint not null,
     review_id bigint not null,
@@ -110,24 +112,14 @@ comment on column integration.review_similarto.other_review_id is 'The other sim
 -- Not recursively go back to minimum: If r1 is same as r4 only, and r7 same as r4 --> rows: (r4,r1) and (r7,r4) although the three are probably all similar
 ```
 
-Some example of results we have with the similarity tri-gram calculation:
-
---same meaning but different ordering of words!
-
---similar but not quite the same (looks like plagiarism?)
-
-
---exact duplication  
-
-I'll write a dedicate post on these results once processing is completed on the sub-set of Reviews harvested.
-
-
+I'll write a dedicate post on these results once processing of the sub-set of Reviews are completed.
 
 
 ### Other derived components
 
 Based on the same Reviews derivation, we could also try to find out same users across sites. There is no direct way from our source data to link/merge same user from different sites.  So the indirect way could be to use reviews similarity. Let's say we have a business rules similar to :  *Flag user from different sites as being the same whenever more than x (say 3) reviews are highly similar*. This would be straightforward to implement using the derivations above.
 
+### Data cleansing
 
 TODO: re-travailler...
 We also fix data issues and store in this layer.. An example, is the handling of Work-id found inside thingISBN.xml.  These may correspond to duplicates of other id (merged to the same Work). These are discovered during harvesting, as LT website re-directs request made to thee duplicates ids to the "master" work.  
