@@ -22,6 +22,18 @@ Let's say we're required to find similar reviews written on Work. This could be 
 
 How do we do that?  Data processing done on unstructured text can be done efficiently by NoSQL engines with massively parallel processing capability (MPP).  These engines would leverage a "divide and conquer" strategy by distributing reviews among different cluster nodes while  making sure reviews of same work land on same node (locality ??).  (transform the review text into ?? and easily find N-gram ... . ex. Spark using etc.. related to my course)
 
+
+> N-gram is a way to represent documents as set useful to identify similarity between them (trigram version based on 3-letters, will results to a 26^3 dimensional space).  It is shown that two documents with similar vector-representation are likely to be similar, and as such many applications are using this technique (e.g. identifying lexically similar documents, detecting plagiarism, ..).  
+
+Using BRD'review data, we spotted these two reviews (from book XX) as being similar (similarity=??):
+
+User-uid  |  Review-date  |  Review text  
+----------|---------------|---------------
+rrrr | feb-25-2016 | bla biehfpo uèoj èoiu èpoi öij àlkjè o ¨pojkj èpo èop jénékih èoij
+uuu | feb-26-2016 | bla biehfpo uèoj èoiu èpoi öij àlkjè o ¨pojkj èpo èop jénékih èoij
+
+
+
 This is a good illustration of complementary usage/collaboration between modern NoSQL engine and more traditional RDBMS-based approach.   
 
 However for this demonstration, neither the data volume/rate nor the latency constraint impose the use of MPP-based engines.  We can directly proceed within PostgreSQL by leveraging text comparison functions like tri-gram (see pg_trgm package).
