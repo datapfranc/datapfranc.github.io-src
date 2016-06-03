@@ -14,26 +14,26 @@ This site is used to document my adventures while experimenting this concept.
 
 ## Premise
 
-The project is speculating that DataPlateform**[^footnote]** giving access to cleansed dataset integrating multiple 3<sup>rd</sup>-party provider's data will become prevalent to many analytical projects.
+The project is speculating that DataPlateform**[^footnote]** giving access to cleansed dataset integrating multiple 3<sup>rd</sup> party data will become prevalent to many analytical projects.
 
 This is considering:
 
 1. __Data Preparation__
-That step is costly, but <u>mandatory</u> when integrating multi-source data, is better left to a dedicated and specialized team
+  * this step is costly but <u>mandatory</u> when integrating multi-source data and is better left to a dedicated and specialized team
 2. __Cloud-based cost model__
-With its zero initial investment and pay-per-usage policy, Cloud-based SaaS will also be attractive in the data analytics domain
+  * with its zero initial investment and pay-per-usage policy, it will also be attractive in the data analytics domain
 3. __Cloud computing scalability__
-Linear and near "infinite" scalability is needed to open analytical capability to much larger audience
+  * linear and near "infinite" scalability is needed to open analytical capability to much larger audience
 4. __Data asset integration__
-Single source dataset has limited value by itself... the famous saying "The whole is greater than the sum of its parts”
+  * single source dataset has limited value by itself.. the famous saying "The whole is greater than the sum of its parts”
 5. __A bit of idealism!__
-Modern world is dense, interconnected and interdependent.. striving for more collaboration and sharing dataset should prevail over competitive argument!
+  * Modern world is dense, interconnected and interdependent.. striving for more collaboration and sharing dataset should prevail over competitive argument!
 
 Refer to [context]({filename}2-Context.md) for more details.
 
 ## DataPlatform offering
 
-The project is dedicated to create DataPlatforms with any kind of integrated dataset. It is dedicated to taking on all Data Preparation work in place of Data Providers, as well as visualisation/dashboarding work to offer BI analytics as a self-service available to non-expert.
+The project is dedicated to create DataPlatforms with any kind of integrated dataset. It takes care of all Data Preparation work in place of Data Providers, as well as visualisation/dashboarding work to offer BI analytics as a self-service available to non-expert.
 
 It is the place to find LIVE, CLEANSED, STRUCTURED, MODELED, CONSISTENT and INTEGRATED multi-source dataset accessible in the Cloud! There are many [large datasets](https://www.quora.com/Where-can-I-find-large-datasets-open-to-the-public) available like [BigQuery dataset](https://www.reddit.com/r/bigquer/wiki/datasets), or [AWS dataset](http://aws.amazon.com/datasets/), but these are raw data derived from a single source.
 
