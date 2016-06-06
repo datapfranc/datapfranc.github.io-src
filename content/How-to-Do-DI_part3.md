@@ -174,5 +174,4 @@ comment on column integration.work_sameas.master_refid is 'The "master" work tha
 
 ### Wrap-up
 
-This concludes the series of posts presenting some aspects of data integration using the Book Review Dataset as test case. I'll later present some aspects on the Presentation layer, but for that I need to decide which Cloud provider BRD will be tested on.  Presentation layer schema design is very much influenced by data access tools and this is rapidly evolving.
- 
+This concludes the series of posts presenting some aspects of data integration with Book Review Dataset as test case. I'll later present Presentation layer, but for that I need to decide which Cloud provider BRD will be tested on.  Presentation layer schema design is much influenced by backend technology and data access tools.
