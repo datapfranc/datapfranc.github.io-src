@@ -7,10 +7,9 @@ Status: draft
 
 ### BRD's summary stats
 
-Ok after a few weeks spent harvesting and integrating book reviews, I'd like to share some statistics.  
+Ok after a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
 
-Overall, I did manage to harvest reviews for a sample of about 15?% of all work in Librarything, i.e. 1xxK books (for simplicity I'll use the term Book instead of Work here).  I've started harvesting book sequentially (order by by work-id), and then ordered them by popularity to have more reviews. Some Work could not be found in other sites and some had no reviews.
-
+Overall, reviews were harvested for about 150K books, i.e. 15% of all books found in Librarything (for simplicity I'll use the term Book instead of Work here).  I've started harvesting book sequentially (ordered by work-id), and later ordered them by popularity in order to have more reviews. Some Work could not be found in other sites while many had no reviews.
 
 | Statistics | **Librarything** | **Goodreads** | **Babelio** |
 |----|----|----|---|
@@ -19,7 +18,7 @@ Overall, I did manage to harvest reviews for a sample of about 15?% of all work 
 | Book without review | 32 | same | 30 | 300 |
 | Total reviews |  
 
-*Note on Amazon: did not contact them to get my spider working, so decided not to harvest reviews from amazon (interested to see how many copy of reviews between Amazon and Goodreads)*
+*Note on Amazon: did not know how to contact them to get my spider working, so decided not to harvest reviews from them*
 *Note on Goodreads: a limit of 100 pages of reviews are available from Web, so popular book may not be complete (max available=3030)*
 *Note on Babelio: dedicated to french literature, number of reviews harvested may not reflect their overall reviews number*
 
@@ -71,9 +70,9 @@ That one was surprising!  Using following rules, I discover there are many dupli
    - Only compare reviews belonging to same Work (logically)
    - Only compare reviews with text of at least 100 characters long (avoid the similar short reviews)
    - Only compare reviews with text of comparable size (however this reduces plagiarism detection)
-   - Flag reviews as similar when their trigram similarity is above ??  
+   - Flag reviews as duplicates when their trigram similarity is above ??  
 
-| Site source | Total nb of similar | Ratio nb diff vs similar |  | Nb of reviews |
+| Site source | Total nb of dupes | Avg dupes per Book | Ratio avg dupes per book over avg nb per book |
 |----|----|----|---|----|
 | Librarything | 32 | same | 30 | 300 |
 | Goodreads | 32 | same | 30 | 300 |
@@ -83,9 +82,19 @@ That one was surprising!  Using following rules, I discover there are many dupli
 These number are intriguing and encouraged further investigation.  So I drill-down the analysis to get more details....
 
 
+```sql
+select sum(case when s.id IS NOT NULL 1 else 0 end) as "Total dupes"
+      , sum(case when s.id IS NOT NULL 1 else 0 end) / count(distinct work_refid) as "Avg #ofdupes per book"
+      ,
+      avg(over  partition by ) / count(distinct work_refid) as "Ratio nb diff vs sim"
+      ,
 
+from integration.review r
+left join (select review_id as id from integration.review_similarto
+           union
+           select other_review_id as id from integration.review_similarto) as s on (r.id = s.id)
 
-
+```
 
 
 Many reviews have duplicates so I tried to distinguish different cases:
