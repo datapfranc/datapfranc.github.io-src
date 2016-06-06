@@ -45,7 +45,6 @@ It contains over ? millions reviews collected from well known sites (feel free t
 3. [Amazon](amazon.com)
 4. International Amazon (br, ca, fr, de, in, it, jp, mx, nl, es, uk and au)
 5. [Babelio](babelio.fr)
-6. [CritiquesLibres](critiqueslibres.fr)
 
 With BRD, you can start doing analytics on millions of book reviews without any initial investment!
 
@@ -53,21 +52,21 @@ With BRD, you can start doing analytics on millions of book reviews without any 
 
 First off, BRD has a pay­-per-­use cost policy applicable to all registered users. A percentage of benefit generated is shared with site’s owner pro­-rata (i.e. using number of reviews).
 
-BRD focus is not about understanding users/readers behavior and profile, so it only needs site user’s unique id for integration purposes (data deduplication and demographics roll­up). BRD will neither expose it to its registered users (except for user coming from one of the participating sites).
+BRD focus is not about understanding users/readers behavior and profile, so it only needs site user’s unique id for integration purposes (data de-duplication and demographics roll­up). BRD will neither expose it to its registered users (except for user coming from one of the participating sites).
 
 Besides monetizing your data asset, you can also enhance your own analytical capability by extending your database with many more millions of reviews.
 
 If you choose to participate to BRD, you can also take advantage of BRD data integrity checks and obtain special reports on:
 
 * Data anomalies
-* Plagiarism reviews check on same work
+* Plagiarism reviews check on same book
 * Duplicate reviews and reviewers across sites
 * Fake reviews or spam
 * Other on-demand analysis
 
 ### BRD Data Integration
 
-BRD collects and integrates heterogeneous and multi-­source dataset into its Cloud­-based solution. All reviews are reported at Work and language level. Work is the main integration point that consolidate reviews assigned to all Books regardless of their editions/translations (whether print, digital or other form). Refer to LT’s Work concept definition.
+BRD collects and integrates heterogeneous and multi-­source dataset into its Cloud­-based solution. All reviews are reported at Work and language level. **Work** is the main integration point that consolidate reviews assigned to all **Books** regardless of their editions, translations, format (print, digital or other form). Refer to LT’s [Work](https://www.librarything.com/concepts) definition.  For simplicity both terms are used interchangeably.
 
 ### BRD Data Cleansing
 
