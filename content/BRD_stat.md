@@ -62,6 +62,48 @@ order by 2 desc
 limit 20;
 ```
 
+### Average appreciation
+
+Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level:  first calculate average rating per book per site then average over their differences.
+
+| Site          | Librarything | Goodreads | Babelio |
+| :------------ | :----------: | :--------:| :------:|
+| Librarything  | 8.3 (0.4)    | +0.3 (-0.02) |   +0.4 (+0.04) |
+| Goodreads     |              |  7.4 (0.4)   |   -0.2 ()      |
+| Babelio       |              |           |   8.1 ()    |
+
+We see reviewer from Gd are less harsh than LT by an average of 0.3 (rating was standardized on a 10 points scale) ? whereas reviewer from GR are the least.....
+
+The number in parenthesis gives the standard deviation differences (again at book level). Reviewer from GR tend to be more in aggreement than the reviewers from the other sites...        
+
+```sql
+--base table to construct
+create table public.res_stats as
+(select work_refid
+       , avg(case when site_id = 1 then parsed_rating else null end) as avg_rating_lt
+       , stddev(case when site_id = 1 then parsed_rating else null end) as std_rating_lt
+       , sum(case when site_id = 1 then 1 else 0 end) as ctn_lt
+       , avg(case when site_id = 2 then parsed_rating else null end) as avg_rating_gr
+       , stddev(case when site_id = 2 then parsed_rating else null end) as std_rating_gr
+       , sum(case when site_id = 2 then 1 else 0 end) as ctn_gr
+       , avg(case when site_id = 4 then parsed_rating else null end) as avg_rating_ba
+       , stddev(case when site_id = 4 then parsed_rating else null end) as std_rating_ba
+       , sum(case when site_id = 4 then 1 else 0 end) as ctn_ba       
+from integration.review
+group by work_refid);
+
+select
+   avg(avg_rating_lt) as mean_lt, avg(std_rating_lt) as std_lt
+   , avg(avg_rating_gr) as mean_gr, avg(std_rating_gr) as std_gr
+   , avg(avg_rating_ba) as mean_ba, avg(std_rating_ba) as std_ba
+   , avg(avg_rating_lt-avg_rating_gr) as mean_lt_gr, avg(std_rating_lt-std_rating_gr) as std_lt_gr
+   , avg(avg_rating_lt-avg_rating_ba) as mean_lt_ba, avg(std_rating_lt-std_rating_ba) as std_lt_ba
+   , avg(avg_rating_gr-avg_rating_ba) as mean_gr_ba, avg(std_rating_gr-std_rating_ba) as std_gr_ba
+   , corr(avg_rating_lt, avg_rating_gr) as corr_lt_gr
+   , corr(avg_rating_lt, avg_rating_ba) as corr_lt_ba
+   , corr(avg_rating_gr, avg_rating_ba) as corr_gr_ba
+from public.res_stats
+```
 
 
 ### Duplicated Reviews
@@ -98,3 +140,34 @@ left join (select review_id as id from integration.review_similarto
 
 
 Many reviews have duplicates so I tried to distinguish different cases:
+
+
+
+
+### Site Correlation
+
+Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of average rating between different sites:
+
+| Site          | Librarything | Goodreads | Babelio |
+| :-----------  | :----------: | :--------:| :------:|
+| Librarything  | 1            | +0.3      |   +0.4  |
+| Goodreads     | --           | 1         |   - 0.4 |
+| Babelio       | --           |  --       |   1     |
+
+
+
+### International Reviews
+
+What about the languages used?  Let's look at the distribution chart of languages used.
+
+```sql
+select lang_code, count(1)
+from integration.review
+where lang_code not in ('--','')
+group by 1
+limit 20;
+```
+
+I used the Python lang_detect module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
+
+Although Librarything classify reviews by language, these were not used for consistency with the other site (and to avoid some issues where language was not set or wrong).
