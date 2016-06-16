@@ -163,7 +163,7 @@ What about the languages used?  Let's look at the distribution chart of language
 ```sql
 select lang_code, count(1)
 from integration.review
-where lang_code not in ('--','')
+where lang_code not in ('--','und') and lang_code is not null
 group by 1
 limit 20;
 ```
