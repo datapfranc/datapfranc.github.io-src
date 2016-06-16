@@ -9,7 +9,7 @@ Status: draft
 
 Ok after a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
 
-Overall, reviews were harvested for about 150K books, i.e. 15% of all books found in Librarything (for simplicity I'll use the term Book instead of Work here).  I've started harvesting book sequentially (ordered by work-id), and later ordered them by popularity in order to have more reviews. Some Work could not be found in other sites while many had no reviews.
+Overall, reviews were harvested for about 150K books, i.e. 15% of all books found in Librarything (for simplicity the term Book is used instead of Work here).  I've started harvesting book sequentially (by their id) to later processed them by popularity as a way to get more reviews.  Some Work from Librarything could not be found in other sites while many had no reviews.
 
 | Statistics | **Librarything** | **Goodreads** | **Babelio** |
 |----|----|----|---|
@@ -18,23 +18,24 @@ Overall, reviews were harvested for about 150K books, i.e. 15% of all books foun
 | Book without review | 32 | same | 30 | 300 |
 | Total reviews |  
 
-*Note on Amazon: did not know how to contact them to get my spider working, so decided not to harvest reviews from them*
+*Note on Amazon: did not contact them to get my spider working, so decided not to harvest their reviews*
 *Note on Goodreads: a limit of 100 pages of reviews are available from Web, so popular book may not be complete (max available=3030)*
-*Note on Babelio: dedicated to french literature, number of reviews harvested may not reflect their overall reviews number*
+*Note on Babelio: dedicated to french literature, the number of reviews harvested may not reflect their total reviews available*
 
 ### Reviewers
 
 How many reviewers wrote these 3?M reviews?
 
 ```sql
-select site_id, count(distinct user_id) as "Nb of reviewer", count(1) / count(distinct user_id) as "Avg per reviewer",
-       count(1) / count(distinct work_refid) as "Avg per book"
+select site_id, count(distinct user_id) as "Nb of reviewer"
+      , count(1) / count(distinct user_id) as "Avg nb of reviews per reviewer"
+      , count(1) / count(distinct work_refid) as "Avg nb of reviews per book"
 from integration.review
 group by 1;
 ```
 
-
 It seems reviewers are more productive on site x and less on site y. These stats will need further analysis considering the important number of reviews duplicates found (see next point).
+
 
 | Site source | Nb of Reviewer | Nb of Work found | Nb of Work without Reviews | Nb of reviews |
 |----|----|----|---|----|
@@ -45,7 +46,7 @@ It seems reviewers are more productive on site x and less on site y. These stats
 
 ### Most reviewed Books
 
-The top 10 most reviewed book from my sample are:
+The top 10 most reviewed book from my sample dataset combining the three sites:
 
 | Book | Total Nb of reviews |
 | ---- | ---- |
@@ -62,11 +63,11 @@ order by 2 desc
 limit 20;
 ```
 
-### Average appreciation
+### Average appreciation and correlation
 
-Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating between at <u>book</u> level.
+Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level between site.
 
-For simplicity, let's define the metric _score_ as the average rating given on a book per site.  After having standardized rating on a 10 points scale, we got the following average and standard deviation for Librarything (lt), Goodreads (gr) and Babelio (ba):
+For simplicity, let's define the metric _score_ as the average rating given on a book per site (where rating was standardized on a 10 points scale).  This following gives the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
 
 | Site | Avg | Std dev |
 | :---- | :----: | :----:|
@@ -74,17 +75,16 @@ For simplicity, let's define the metric _score_ as the average rating given on a
 | _score_<sub>gr</sub> | 7.4  | 2.5 |
 | _score_<sub>ba</sub> | 5.3  | 1.2 |
 
-We see reviewer from Gd are far less harsh than LT by an average of 0.3 (rating was) ? whereas reviewer from GR are the least.....
+We see reviewer from Goodreads are slightly less harsh than LT by an average of 0.3 (rating was) ? whereas reviewer from GR are the least.....
 However, Lt's reviewer tend to be more alike given the smaller standard deviation...        
 
-Looking at correlation matrix, it seems that ....
- 
+Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of our score variables by sites:
 
-| Score by Site | Librarything | Goodreads | Babelio |
-| :------------ | :----------: | :--------:| :------:|
-| Librarything  | 8.3 (0.4)    | +0.3 (-0.02) |   +0.4 (+0.04) |
-| Goodreads     |              |  7.4 (0.4)   |   -0.2 ()      |
-| Babelio       |              |           |   8.1 ()    |
+| Site          | Librarything | Goodreads | Babelio |
+| :-----------  | :----------: | :--------:| :------:|
+| Librarything  | 1            | +0.3      |   +0.4  |
+| Goodreads     | --           | 1         |   - 0.4 |
+| Babelio       | --           |  --       |   1     |
 
 
 ```sql
@@ -119,11 +119,11 @@ from public.res_stats
 
 ### Duplicated Reviews
 
-That one was surprising!  Using following rules, I discover there are many duplicate reviews.
-   - Only compare reviews belonging to same Work (logically)
-   - Only compare reviews with text of at least 100 characters long (avoid the similar short reviews)
-   - Only compare reviews with text of comparable size (however this reduces plagiarism detection)
-   - Flag reviews as duplicates when their trigram similarity is above ??  
+That one was more surprising!  Using these simple rules to identify duplicate reviews:
+   - Only comparing reviews from same Work (logical)
+   - Comparing reviews with text of at least 100 characters long (avoid similar short reviews)
+   - Comparing reviews with text of similar size (&#177; +/- 8%, however this may reduce plagiarism detection)
+   - Flag reviews as duplicates when their **trigram** similarity is above 0.7?  (although this may seem small, most similar reviews have index larger than 0.9?)  
 
 | Site source | Total nb of dupes | Avg dupes per Book | Ratio avg dupes per book over avg nb per book |
 |----|----|----|---|----|
@@ -132,38 +132,80 @@ That one was surprising!  Using following rules, I discover there are many dupli
 | Babelio | 32 | same | 30 | 300 |
 
 
-These number are intriguing and encouraged further investigation.  So I drill-down the analysis to get more details....
+
 
 
 ```sql
-select sum(case when s.id IS NOT NULL 1 else 0 end) as "Total dupes"
-      , sum(case when s.id IS NOT NULL 1 else 0 end) / count(distinct work_refid) as "Avg #ofdupes per book"
-      ,
-      avg(over  partition by ) / count(distinct work_refid) as "Ratio nb diff vs sim"
-      ,
-
-from integration.review r
-left join (select review_id as id from integration.review_similarto
-           union
-           select other_review_id as id from integration.review_similarto) as s on (r.id = s.id)
-
+with per_wid as (
+ select
+       r.work_refid
+       , sum(case when dupes.id IS NOT NULL then 1 else 0 end) as Nb_dupes
+       , count(1) as Nb_reviews
+ from integration.review r
+ left join (select review_id as id from integration.review_similarto
+            union
+            select other_review_id as id from integration.review_similarto) as dupes on (r.id = dupes.id)
+ group by 1
+ --for perf only.. TO BE REMOVED
+ limit 200)
+select
+     sum(Nb_dupes) as "Total dupes"
+     , sum(Nb_reviews) as "Total reviews"
+     , avg(Nb_dupes) as "Avg dupes"
+     , avg(Nb_dupes) / avg(Nb_reviews) as "Ratio avg dupes over avg nb reviews"
+from per_wid;
 ```
 
 
+
+These numbers are intriguing and encouraged further investigation.  So let's drill-down the analysis a bit further....
+
 Many reviews have duplicates so I tried to distinguish different cases:
 
+Are these duplicates within site or across sites?
 
 
 
-### Site Correlation
+```sql
+--here it's just the distinct dupes (the same 2 reviews only be counted once)
+select sum(case when r.site_id = 1 and o.site_id = 1 then 1 else 0 end) as "Total within Lt"
+     , sum(case when r.site_id = 2 and o.site_id = 2 then 1 else 0 end) as "Total within Gr"
+     , sum(case when r.site_id = 4 and o.site_id = 4 then 1 else 0 end) as "Total within Ba"
+     , sum(case when r.site_id = 1 and o.site_id = 2 then 1
+                when r.site_id = 2 and o.site_id = 1 then 1 else 0 end) as "Total between Lt and Gr"
+     , sum(case when r.site_id = 1 and o.site_id = 4 then 1
+                when r.site_id = 4 and o.site_id = 1 then 1 else 0 end) as "Total between Lt and Ba"
+     , sum(case when r.site_id = 2 and o.site_id = 4 then 1
+                when r.site_id = 4 and o.site_id = 2 then 1 else 0 end) as "Total between Gr and Ba"
+from integration.review_similarto s
+join integration.review r on (s.review_id = r.id)
+join integration.review o on (s.other_review_id = o.id);
+```
 
-Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of average rating between different sites:
 
-| Site          | Librarything | Goodreads | Babelio |
-| :-----------  | :----------: | :--------:| :------:|
-| Librarything  | 1            | +0.3      |   +0.4  |
-| Goodreads     | --           | 1         |   - 0.4 |
-| Babelio       | --           |  --       |   1     |
+Duplicates assessment:
+
+————————Site Goodreads —————————————
+-Exact duplicates (sim=1): same day, same username, same site: 9120, 9119
+—Near duplicates (sim=1):  same day, similar username (salcarla vs salsabrarian), same site (2):  review-ids: 4135, 4130
+-Exact sim=1, same username, diff date : 15366, 8636
+-same as above but two different date: 4514, 4511
+-same as above but more different date: 6785 and 5542
+
+- Duplicate with slight text var (sim=0.91): diff username, dif date, one review has prefix: ‘EDITORIAL REVIEW’: 13250,9843
+
+- What seems to be a case of plagiarism: 13773, 13368
+
+- Same user with some habit of duplicating: ‘Mark Valentine’ with redid (17988,16742) and (15366, 8636)
+
+- Some write the same (in foreign lang) with its usersname in arabic and in english (30861, 28679)
+
+- Some other may be pure coincidental: the one giving citation only (32895, 25544)
+
+- Could it be that people simply copy reviews to get more: see 1002184-sara/6808758-shirley (revid 35315 and 32345), where sara has much more, could it be all copies .. check out username with many copies!!
+
+ 563106-mark-sellers / 672130-emily
+
 
 
 
