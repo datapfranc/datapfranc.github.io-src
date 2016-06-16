@@ -64,17 +64,28 @@ limit 20;
 
 ### Average appreciation
 
-Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level:  first calculate average rating per book per site then average over their differences.
+Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating between at <u>book</u> level.
 
-| Site          | Librarything | Goodreads | Babelio |
+For simplicity, let's define the metric _score_ as the average rating given on a book per site.  After having standardized rating on a 10 points scale, we got the following average and standard deviation for Librarything (lt), Goodreads (gr) and Babelio (ba):
+
+| Site | Avg | Std dev |
+| :---- | :----: | :----:|
+| _score_<sub>lt</sub> | 8.3  | 2.3 |  
+| _score_<sub>gr</sub> | 7.4  | 2.5 |
+| _score_<sub>ba</sub> | 5.3  | 1.2 |
+
+We see reviewer from Gd are far less harsh than LT by an average of 0.3 (rating was) ? whereas reviewer from GR are the least.....
+However, Lt's reviewer tend to be more alike given the smaller standard deviation...        
+
+Looking at correlation matrix, it seems that ....
+ 
+
+| Score by Site | Librarything | Goodreads | Babelio |
 | :------------ | :----------: | :--------:| :------:|
 | Librarything  | 8.3 (0.4)    | +0.3 (-0.02) |   +0.4 (+0.04) |
 | Goodreads     |              |  7.4 (0.4)   |   -0.2 ()      |
 | Babelio       |              |           |   8.1 ()    |
 
-We see reviewer from Gd are less harsh than LT by an average of 0.3 (rating was standardized on a 10 points scale) ? whereas reviewer from GR are the least.....
-
-The number in parenthesis gives the standard deviation differences (again at book level). Reviewer from GR tend to be more in aggreement than the reviewers from the other sites...        
 
 ```sql
 --base table to construct
