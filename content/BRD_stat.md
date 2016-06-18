@@ -1,48 +1,48 @@
-Title: Draft Example
-Date: 2016-5-21 11:15
+Title: BRD summary stats
+Date: 2016-6-21 14:47
 Tags: dataset
-Slug: draft
+Slug: brd_stats
 Author: Martin Ouellet
 Status: draft
 
-### BRD's summary stats
+After a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
 
-Ok after a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
-
-Overall, reviews were harvested for about 150K books, i.e. 15% of all books found in Librarything (for simplicity the term Book is used instead of Work here).  I've started harvesting book sequentially (by their id) to later processed them by popularity as a way to get more reviews.  Some Work from Librarything could not be found in other sites while many had no reviews.
+Over ?? millions reviews were harvested for about 150K books, or 15% of different books listed in Librarything (for simplicity I'll use the term Book instead of Work).  I've started harvesting book sequentially (by id) to later processed them by popularity as a way to get more reviews.  Some Work  catalogued in Librarything could not be found in other sites while many other had no reviews.
 
 | Statistics | **Librarything** | **Goodreads** | **Babelio** |
 |----|----|----|---|
-| Total book sample size | 32 | n.a. | n.a. |
-| Book found | n.a. | 23 | 30 |
-| Book without review | 32 | same | 30 | 300 |
-| Total reviews |  
+| Book sample size | 32 | -- | -- |
+| Book found | -- | 23 | 30 |
+| Book without review | 32 | 23 | 30 |
+| Number of reviews |  4.5M | 43.6M | 4.65M |
 
-*Note on Amazon: did not contact them to get my spider working, so decided not to harvest their reviews*
-*Note on Goodreads: a limit of 100 pages of reviews are available from Web, so popular book may not be complete (max available=3030)*
-*Note on Babelio: dedicated to french literature, the number of reviews harvested may not reflect their total reviews available*
+Notes:
+
+* I did not contact Amazon to get my spider working, and decided not to harvest their reviews
+* a limit of 100 pages of reviews are available from Goodreads website, so popular book may not have all reviews (max available=3030)
+* Babelio is dedicated to french literature, and reviews harvested may not reflect its popularity (book sample is biased toward english and/or international best seller).
+
 
 ### Reviewers
 
 How many reviewers wrote these 3?M reviews?
 
-```sql
+| Site source | #Reviewer | Avg #Reviews per reviewer | Avg #Reviews per book |
+|----|----|----|---|
+| Librarything | 323K | 43 | 30 |
+| Goodreads | 325K | 54 | 30 |
+| Babelio | 32K | 87 | 30 |
+
+
+It seems reviewers are more productive on site x and less on site y. These stats will need further analysis considering the important number of reviews duplicates found (see next point).
+
+<!--
 select site_id, count(distinct user_id) as "Nb of reviewer"
       , count(1) / count(distinct user_id) as "Avg nb of reviews per reviewer"
       , count(1) / count(distinct work_refid) as "Avg nb of reviews per book"
 from integration.review
 group by 1;
-```
-
-It seems reviewers are more productive on site x and less on site y. These stats will need further analysis considering the important number of reviews duplicates found (see next point).
-
-
-| Site source | Nb of Reviewer | Nb of Work found | Nb of Work without Reviews | Nb of reviews |
-|----|----|----|---|----|
-| Librarything | 32 | same | 30 | 300 |
-| Goodreads | 32 | same | 30 | 300 |
-| Babelio | 32 | same | 30 | 300 |
-
+-->
 
 ### Most reviewed Books
 
@@ -54,14 +54,14 @@ The top 10 most reviewed book from my sample dataset combining the three sites:
 | book2 | 43242342 |
 
 
-```sql
+<!--
 select concat(w.title, ' (id=', w.work_refid, ')'), count(1)
 from integration.review r
 join work_info w on w.work_refid = r.work_refid
 group by 1
 order by 2 desc
 limit 20;
-```
+-->
 
 ### Average appreciation and correlation
 
@@ -87,7 +87,7 @@ Are reviewer's between different site in agreement with each other?  This can be
 | Babelio       | --           |  --       |   1     |
 
 
-```sql
+<!--
 --base table to construct
 create table public.res_stats as
 (select work_refid
@@ -114,7 +114,7 @@ select
    , corr(avg_rating_lt, avg_rating_ba) as corr_lt_ba
    , corr(avg_rating_gr, avg_rating_ba) as corr_gr_ba
 from public.res_stats
-```
+-->
 
 
 ### Duplicated Reviews
@@ -133,9 +133,7 @@ That one was more surprising!  Using these simple rules to identify duplicate re
 
 
 
-
-
-```sql
+<!--
 with per_wid as (
  select
        r.work_refid
@@ -154,7 +152,7 @@ select
      , avg(Nb_dupes) as "Avg dupes"
      , avg(Nb_dupes) / avg(Nb_reviews) as "Ratio avg dupes over avg nb reviews"
 from per_wid;
-```
+-->
 
 
 
@@ -166,7 +164,7 @@ Are these duplicates within site or across sites?
 
 
 
-```sql
+<!--
 --here it's just the distinct dupes (the same 2 reviews only be counted once)
 select sum(case when r.site_id = 1 and o.site_id = 1 then 1 else 0 end) as "Total within Lt"
      , sum(case when r.site_id = 2 and o.site_id = 2 then 1 else 0 end) as "Total within Gr"
@@ -180,7 +178,7 @@ select sum(case when r.site_id = 1 and o.site_id = 1 then 1 else 0 end) as "Tota
 from integration.review_similarto s
 join integration.review r on (s.review_id = r.id)
 join integration.review o on (s.other_review_id = o.id);
-```
+-->
 
 
 Duplicates assessment:
@@ -193,18 +191,14 @@ Duplicates assessment:
 -same as above but more different date: 6785 and 5542
 
 - Duplicate with slight text var (sim=0.91): diff username, dif date, one review has prefix: ‘EDITORIAL REVIEW’: 13250,9843
-
 - What seems to be a case of plagiarism: 13773, 13368
-
 - Same user with some habit of duplicating: ‘Mark Valentine’ with redid (17988,16742) and (15366, 8636)
-
 - Some write the same (in foreign lang) with its usersname in arabic and in english (30861, 28679)
-
 - Some other may be pure coincidental: the one giving citation only (32895, 25544)
-
 - Could it be that people simply copy reviews to get more: see 1002184-sara/6808758-shirley (revid 35315 and 32345), where sara has much more, could it be all copies .. check out username with many copies!!
 
- 563106-mark-sellers / 672130-emily
+
+563106-mark-sellers / 672130-emily
 
 
 
@@ -213,14 +207,14 @@ Duplicates assessment:
 
 What about the languages used?  Let's look at the distribution chart of languages used.
 
-```sql
+I used the Python lang_detect module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
+
+Although Librarything classify reviews by language, these were not used for consistency with the other site (and to avoid some issues where language was not set or wrong).
+
+<!--
 select lang_code, count(1)
 from integration.review
 where lang_code not in ('--','')
 group by 1
 limit 20;
-```
-
-I used the Python lang_detect module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
-
-Although Librarything classify reviews by language, these were not used for consistency with the other site (and to avoid some issues where language was not set or wrong).
+-->
