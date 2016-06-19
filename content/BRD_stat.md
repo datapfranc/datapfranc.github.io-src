@@ -37,6 +37,9 @@ How many reviewers wrote these 3?M reviews?
 It seems reviewers are more productive on site x and less on site y. These stats will need further analysis considering the important number of reviews duplicates found (see next point).
 
 <!--
+-- to set number representation according to local..
+\pset numericlocale
+
 select site_id, count(distinct user_id) as "Nb of reviewer"
       , count(1) / count(distinct user_id) as "Avg nb of reviews per reviewer"
       , count(1) / count(distinct work_refid) as "Avg nb of reviews per book"
@@ -55,19 +58,19 @@ The top 10 most reviewed book from my sample dataset combining the three sites:
 
 
 <!--
-select concat(w.title, ' (id=', w.work_refid, ')'), count(1)
+select concat(' | ', w.title, ' | ', count(1), ' |')
 from integration.review r
 join work_info w on w.work_refid = r.work_refid
-group by 1
+group by w.title, w.work_refid
 order by 2 desc
 limit 20;
 -->
 
-### Average appreciation and correlation
+### Average appreciation
 
 Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level between site.
 
-For simplicity, let's define the metric _score_ as the average rating given on a book per site (where rating was standardized on a 10 points scale).  This following gives the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
+For simplicity, let's define the metric _score_ as the average rating given on a book for a given site (where rating is standardized on a 10 points scale).  Let's look at the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
 
 | Site | Avg | Std dev |
 | :---- | :----: | :----:|
@@ -78,7 +81,10 @@ For simplicity, let's define the metric _score_ as the average rating given on a
 We see reviewer from Goodreads are slightly less harsh than LT by an average of 0.3 (rating was) ? whereas reviewer from GR are the least.....
 However, Lt's reviewer tend to be more alike given the smaller standard deviation...        
 
-Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of our score variables by sites:
+
+### Site reviewers correlation
+
+Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of our score variables:
 
 | Site          | Librarything | Goodreads | Babelio |
 | :-----------  | :----------: | :--------:| :------:|
@@ -132,7 +138,6 @@ That one was more surprising!  Using these simple rules to identify duplicate re
 | Babelio | 32 | same | 30 | 300 |
 
 
-
 <!--
 with per_wid as (
  select
@@ -155,13 +160,15 @@ from per_wid;
 -->
 
 
+These numbers are intriguing and encouraged further investigation. First are these duplicates within site or across sites?
 
-These numbers are intriguing and encouraged further investigation.  So let's drill-down the analysis a bit further....
+| Site          | Librarything | Goodreads | Babelio |
+| :-----------  | :----------: | :--------:| :------:|
+| Librarything  | 1437 | 43325  |   3443  |
+| Goodreads     | --   | 675767 |   6546  |
+| Babelio       | --   |  --    |   16778 |
 
-Many reviews have duplicates so I tried to distinguish different cases:
-
-Are these duplicates within site or across sites?
-
+It seems most duplicates are coming from ....
 
 
 <!--
@@ -180,7 +187,38 @@ join integration.review r on (s.review_id = r.id)
 join integration.review o on (s.other_review_id = o.id);
 -->
 
+If we drill-down the analysis a bit further (for same site), we can distinguish between these cases:
 
+| Cases | Librarything | Goodreads | Babelio |
+| :---- | ---- | ---- | ---- |
+| 1. Same username at same date | 4234 | 453543 | 34 |
+| 2. Same username at diff date | 4234 | 453543 | 34 |
+| 3. Diff username at same date | 4234 | 453543 | 34 |
+| 4. Diff username at diff date | 4234 | 453543 | 34 |
+| Total within site | 5435435 | 543534 | 56456 |
+
+Note: these are distinct duplicates (different from previous table where all duplicate reviews were counted).
+
+```sql
+select
+  rev.site_id
+  , sum(case when rev.user_id = other.user_id
+                  and rev.review_date = other.review_date then 1 else 0 end) as case1
+  , sum(case when rev.user_id = other.user_id
+                  and rev.review_date != other.review_date then 1 else 0 end) as case2
+  , sum(case when rev.user_id != other.user_id
+                  and rev.review_date = other.review_date then 1 else 0 end) as case3
+  , sum(case when rev.user_id != other.user_id
+                  and rev.review_date != other.review_date then 1 else 0 end) as case4
+  , count(1) as total
+from integration.review_similarto s
+join integration.review rev on rev.id = s.review_id
+join integration.review other on other.id = s.other_review_id and other.site_id = rev.site_id
+
+
+
+
+```
 Duplicates assessment:
 
 ————————Site Goodreads —————————————
