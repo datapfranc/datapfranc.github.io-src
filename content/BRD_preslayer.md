@@ -33,8 +33,9 @@ For each table, we must also determine its Distribution type (using some assumpt
 
 #### Review
 
-`REVIEW` table is, by far, our biggest table and needs to be distributed optimally.  The `book_id` is the best candidate for this as to colocate reviews with their associated `BOOK` (frequently joined together).  However, another good candidate would be `reviewer_id` but this can only be determined much later after real utilization.  The advantage of our layered-approach is that we can re-build the Presentation-layer at will following any changes of requirement or optimization sourcing from the Integration-layer where our data is safely kept!
+`REVIEW` table is, by far, our biggest table and needs to be distributed optimally.  Its distribution key should correspond to one FK that often gets used for joining another large table.  Two logical candidates are `book_id` for table `WORK` or `reviewer_id` for table `REVIEWER`.  At this point, it is quite difficult to know whether our analysis of reviews will be against users demographic or book information (or both), so without real utilization audit we'll have to decide arbitrarily... and that's ok:  one advantage of the layered-architecture is that we can always re-build  Presentation-layer following any changes of optimization goals (Integration-layer safely keeps our data)!
 
+Let's assume `book_id` is the best candidate for this, and hence colocate reviews with their associated books data.  However, another good candidate would be `reviewer_id` but this can only be determined much later after .  The
 
 We decide to sort rows based on review's date to optimize time-series chart.
 
