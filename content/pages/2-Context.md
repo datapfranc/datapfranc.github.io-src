@@ -6,7 +6,7 @@ title: Context
 
 This project capitalizes on 1) my experience acquired during 15 years doing BI projects in the industry, combined with 2) the maturity level recently reached by Data Warehousing/Analytical Cloud providers.
 
-DW in the cloud, in contrast to on­-premise, is tailored for organizations not willing (or no longer) to run expensive, risky and over-­budget DW platforms on­-premise.  It mitigates risk and lower expenses by offering p​ay-per­use ​cost model common to cloud computing and SaaS.
+DW in the cloud, in contrast to on­-premise, is tailored for organizations not willing (or no longer) to run their own expensive, risky and over-­budget DW platforms.  It mitigates risk and lower expenses by offering p​ay-per­-use ​cost model common to cloud computing and SaaS.
 
 But I believe it will also lead to the emergence of **DataPlatform Franchising**, a logical step for Cloud computing and Analytics.
 
