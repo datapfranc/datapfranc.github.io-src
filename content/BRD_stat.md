@@ -7,20 +7,19 @@ Status: draft
 
 After a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
 
-Over ?? millions reviews were harvested for about 150K books, or 15% of different books listed in Librarything (for simplicity I'll use the term Book instead of Work).  I've started harvesting book sequentially (by id) to later processed them by popularity as a way to get more reviews.  Some Work  catalogued in Librarything could not be found in other sites while many other had no reviews.
+Over ?? millions reviews were harvested for about 300K books, or 15% of different books listed in Librarything (for simplicity I'll use the term Book instead of Work).  I've started harvesting book sequentially (by id) to later processed them by popularity as a way to get more reviews.  Some Work catalogued in Librarything could not be found in other sites while others had no reviews.
 
 | Statistics | **Librarything** | **Goodreads** | **Babelio** |
 |----|----|----|---|
-| Book sample size | 32 | -- | -- |
-| Book found | -- | 23 | 30 |
-| Book without review | 32 | 23 | 30 |
+| Book sample size | 300K | -- | -- |
+| Book found | -- | 216K | 78K |
 | Number of reviews |  4.5M | 43.6M | 4.65M |
 
 Notes:
 
 * I did not contact Amazon to get my spider working, and decided not to harvest their reviews
 * a limit of 100 pages of reviews are available from Goodreads website, so popular book may not have all reviews (max available=3030)
-* Babelio is dedicated to french literature, and reviews harvested may not reflect its popularity (book sample is biased toward english and/or international best seller).
+* Babelio is dedicated to french literature, and books found and reviews harvested may not reflect its popularity (sample is biased toward english and/or international best seller).
 
 
 ### Reviewers
@@ -29,12 +28,12 @@ How many reviewers wrote these 3?M reviews?
 
 | Site source | #Reviewer | Avg #Reviews per reviewer | Avg #Reviews per book |
 |----|----|----|---|
-| Librarything | 323K | 43 | 30 |
-| Goodreads | 325K | 54 | 30 |
-| Babelio | 32K | 87 | 30 |
+| Librarything | 84K | 14.36 | 9.96 |
+| Goodreads | 2.486M | 8.26 | 130.21 |
+| Babelio | 29K | 14.07 | 9.11 |
 
 
-It seems reviewers are more productive on site x and less on site y. These stats will need further analysis considering the important number of reviews duplicates found (see next point).
+It seems reviewers are more productive on Librarything and Babeliom (both actually have similar reviewers behavior).  Howver the number of reviews per Book in Goodreads is larger by a scale factor (10X times)! (these numbers consider all reviews even duplicate one, see next point).
 
 
 ### Most reviewed Books
@@ -123,6 +122,6 @@ Duplicates assessment:
 
 What about the languages used?  Let's look at the distribution chart of languages used.
 
-I used the Python lang_detect module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
+I used the Python langid module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
 
 Although Librarything classify reviews by language, these were not used for consistency with the other site (and to avoid some issues where language was not set or wrong).
