@@ -36,41 +36,23 @@ How many reviewers wrote these 3?M reviews?
 
 It seems reviewers are more productive on site x and less on site y. These stats will need further analysis considering the important number of reviews duplicates found (see next point).
 
-<!--
--- to set number representation according to local..
-\pset numericlocale
-
-select site_id, count(distinct user_id) as "Nb of reviewer"
-      , count(1) / count(distinct user_id) as "Avg nb of reviews per reviewer"
-      , count(1) / count(distinct work_refid) as "Avg nb of reviews per book"
-from integration.review
-group by 1;
--->
 
 ### Most reviewed Books
 
-The top 10 most reviewed book from my sample dataset combining the three sites:
+The top 10 most reviewed book from my sample (combining all sites):
 
-| Book | Total Nb of reviews |
+| Book | Nb of reviews |
 | ---- | ---- |
 | book1 | 43242342 |
 | book2 | 43242342 |
 
 
-<!--
-select concat(' | ', w.title, ' | ', count(1), ' |')
-from integration.review r
-join work_info w on w.work_refid = r.work_refid
-group by w.title, w.work_refid
-order by 2 desc
-limit 20;
--->
 
-### Average appreciation
+### Average appreciation and correlation
 
 Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level between site.
 
-For simplicity, let's define the metric _score_ as the average rating given on a book for a given site (where rating is standardized on a 10 points scale).  Let's look at the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
+For simplicity, let's define the metric _score_ as the average rating given on a book per site (where rating was standardized on a 10 points scale).  This following gives the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
 
 | Site | Avg | Std dev |
 | :---- | :----: | :----:|
@@ -81,46 +63,13 @@ For simplicity, let's define the metric _score_ as the average rating given on a
 We see reviewer from Goodreads are slightly less harsh than LT by an average of 0.3 (rating was) ? whereas reviewer from GR are the least.....
 However, Lt's reviewer tend to be more alike given the smaller standard deviation...        
 
-
-### Site reviewers correlation
-
-Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of our score variables:
+Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of our score variables by sites:
 
 | Site          | Librarything | Goodreads | Babelio |
 | :-----------  | :----------: | :--------:| :------:|
 | Librarything  | 1            | +0.3      |   +0.4  |
 | Goodreads     | --           | 1         |   - 0.4 |
 | Babelio       | --           |  --       |   1     |
-
-
-<!--
---base table to construct
-create table public.res_stats as
-(select work_refid
-       , avg(case when site_id = 1 then parsed_rating else null end) as avg_rating_lt
-       , stddev(case when site_id = 1 then parsed_rating else null end) as std_rating_lt
-       , sum(case when site_id = 1 then 1 else 0 end) as ctn_lt
-       , avg(case when site_id = 2 then parsed_rating else null end) as avg_rating_gr
-       , stddev(case when site_id = 2 then parsed_rating else null end) as std_rating_gr
-       , sum(case when site_id = 2 then 1 else 0 end) as ctn_gr
-       , avg(case when site_id = 4 then parsed_rating else null end) as avg_rating_ba
-       , stddev(case when site_id = 4 then parsed_rating else null end) as std_rating_ba
-       , sum(case when site_id = 4 then 1 else 0 end) as ctn_ba       
-from integration.review
-group by work_refid);
-
-select
-   avg(avg_rating_lt) as mean_lt, avg(std_rating_lt) as std_lt
-   , avg(avg_rating_gr) as mean_gr, avg(std_rating_gr) as std_gr
-   , avg(avg_rating_ba) as mean_ba, avg(std_rating_ba) as std_ba
-   , avg(avg_rating_lt-avg_rating_gr) as mean_lt_gr, avg(std_rating_lt-std_rating_gr) as std_lt_gr
-   , avg(avg_rating_lt-avg_rating_ba) as mean_lt_ba, avg(std_rating_lt-std_rating_ba) as std_lt_ba
-   , avg(avg_rating_gr-avg_rating_ba) as mean_gr_ba, avg(std_rating_gr-std_rating_ba) as std_gr_ba
-   , corr(avg_rating_lt, avg_rating_gr) as corr_lt_gr
-   , corr(avg_rating_lt, avg_rating_ba) as corr_lt_ba
-   , corr(avg_rating_gr, avg_rating_ba) as corr_gr_ba
-from public.res_stats
--->
 
 
 ### Duplicated Reviews
@@ -138,87 +87,16 @@ That one was more surprising!  Using these simple rules to identify duplicate re
 | Babelio | 32 | same | 30 | 300 |
 
 
-<!--
-with per_wid as (
- select
-       r.work_refid
-       , sum(case when dupes.id IS NOT NULL then 1 else 0 end) as Nb_dupes
-       , count(1) as Nb_reviews
- from integration.review r
- left join (select review_id as id from integration.review_similarto
-            union
-            select other_review_id as id from integration.review_similarto) as dupes on (r.id = dupes.id)
- group by 1
- --for perf only.. TO BE REMOVED
- limit 200)
-select
-     sum(Nb_dupes) as "Total dupes"
-     , sum(Nb_reviews) as "Total reviews"
-     , avg(Nb_dupes) as "Avg dupes"
-     , avg(Nb_dupes) / avg(Nb_reviews) as "Ratio avg dupes over avg nb reviews"
-from per_wid;
--->
 
 
-These numbers are intriguing and encouraged further investigation. First are these duplicates within site or across sites?
+These numbers are intriguing and encouraged further investigation.  So let's drill-down the analysis a bit further....
 
-| Site          | Librarything | Goodreads | Babelio |
-| :-----------  | :----------: | :--------:| :------:|
-| Librarything  | 1437 | 43325  |   3443  |
-| Goodreads     | --   | 675767 |   6546  |
-| Babelio       | --   |  --    |   16778 |
+Many reviews have duplicates so I tried to distinguish different cases:
 
-It seems most duplicates are coming from ....
-
-
-<!--
---here it's just the distinct dupes (the same 2 reviews only be counted once)
-select sum(case when r.site_id = 1 and o.site_id = 1 then 1 else 0 end) as "Total within Lt"
-     , sum(case when r.site_id = 2 and o.site_id = 2 then 1 else 0 end) as "Total within Gr"
-     , sum(case when r.site_id = 4 and o.site_id = 4 then 1 else 0 end) as "Total within Ba"
-     , sum(case when r.site_id = 1 and o.site_id = 2 then 1
-                when r.site_id = 2 and o.site_id = 1 then 1 else 0 end) as "Total between Lt and Gr"
-     , sum(case when r.site_id = 1 and o.site_id = 4 then 1
-                when r.site_id = 4 and o.site_id = 1 then 1 else 0 end) as "Total between Lt and Ba"
-     , sum(case when r.site_id = 2 and o.site_id = 4 then 1
-                when r.site_id = 4 and o.site_id = 2 then 1 else 0 end) as "Total between Gr and Ba"
-from integration.review_similarto s
-join integration.review r on (s.review_id = r.id)
-join integration.review o on (s.other_review_id = o.id);
--->
-
-If we drill-down the analysis a bit further (for same site), we can distinguish between these cases:
-
-| Cases | Librarything | Goodreads | Babelio |
-| :---- | ---- | ---- | ---- |
-| 1. Same username at same date | 4234 | 453543 | 34 |
-| 2. Same username at diff date | 4234 | 453543 | 34 |
-| 3. Diff username at same date | 4234 | 453543 | 34 |
-| 4. Diff username at diff date | 4234 | 453543 | 34 |
-| Total within site | 5435435 | 543534 | 56456 |
-
-Note: these are distinct duplicates (different from previous table where all duplicate reviews were counted).
-
-```sql
-select
-  rev.site_id
-  , sum(case when rev.user_id = other.user_id
-                  and rev.review_date = other.review_date then 1 else 0 end) as case1
-  , sum(case when rev.user_id = other.user_id
-                  and rev.review_date != other.review_date then 1 else 0 end) as case2
-  , sum(case when rev.user_id != other.user_id
-                  and rev.review_date = other.review_date then 1 else 0 end) as case3
-  , sum(case when rev.user_id != other.user_id
-                  and rev.review_date != other.review_date then 1 else 0 end) as case4
-  , count(1) as total
-from integration.review_similarto s
-join integration.review rev on rev.id = s.review_id
-join integration.review other on other.id = s.other_review_id and other.site_id = rev.site_id
+Are these duplicates within site or across sites?
 
 
 
-
-```
 Duplicates assessment:
 
 ————————Site Goodreads —————————————
@@ -248,11 +126,3 @@ What about the languages used?  Let's look at the distribution chart of language
 I used the Python lang_detect module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
 
 Although Librarything classify reviews by language, these were not used for consistency with the other site (and to avoid some issues where language was not set or wrong).
-
-<!--
-select lang_code, count(1)
-from integration.review
-where lang_code not in ('--','und') and lang_code is not null
-group by 1
-limit 20;
--->
