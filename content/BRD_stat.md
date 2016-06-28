@@ -87,7 +87,7 @@ Are reviewer's between different site in agreement with each other?  This can be
 | Goodreads     | --           | 1         |   +0.18 |
 | Babelio       | --           |  --       |   1     |
 
-Yes all scores are positively correlated, with higher correlation between Librarything and Goodreads (probably more similar cultural background).  A bit surprise by the relative small level of correlation though?  
+Yes all scores are positively correlated but not by much.  It seems reviewers give on average similar rating, but only agree moderately on which books are good or bad.  This is especially true between Babelio and the other sites, where cultural differences seems to be at play.    
 
 
 ### Duplicated Reviews
@@ -143,8 +143,8 @@ Duplicates assessment:
 
 ### International Reviews
 
-What about the languages used?  Let's look at the distribution chart of languages used.
+What about the languages used for reviewing?  Let's look at the distribution graph of languages.
 
 I used the Python langid module (ref) to detect the language used in review.  To avoid getting unpredictable results it was used for reviews with at least 50 characters.   
 
-Although Librarything classify reviews by language, these were not used for consistency with the other site (and to avoid some issues where language was not set or wrong).
+Although Librarything classify reviews by language, these were not used for consistency with the other site and to avoid some issues where language was not set or wrong.  
