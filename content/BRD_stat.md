@@ -7,7 +7,7 @@ Status: draft
 
 After a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
 
-Over ?? millions reviews were harvested for about 300K books, or 15% of different books listed in Librarything (for simplicity I'll use the term Book instead of Work).  I've started harvesting book sequentially (by id) to later processed them by popularity as a way to get more reviews.  Some Work catalogued in Librarything could not be found in other sites while others had no reviews.
+Over 22 millions reviews were harvested on about 300K books, or 15% of different books listed in Librarything (for simplicity, the term Book is used instead of Work).  I've started harvesting book sequentially (by id) to later processed them by popularity as a way to get more reviews.  Some Work catalogued in Librarything could not be found in other sites while others had no reviews.
 
 | Statistics | **Librarything** | **Goodreads** | **Babelio** |
 |----|----|----|---|
@@ -24,7 +24,7 @@ Notes:
 
 ### Reviewers
 
-How many reviewers wrote these 3?M reviews?
+How many reviewers wrote these 22M reviews?
 
 | Site source | #Reviewer | Avg #Reviews per reviewer | Avg #Reviews per book |
 |----|----|----|---|
@@ -33,7 +33,7 @@ How many reviewers wrote these 3?M reviews?
 | Babelio | 29K | 14.07 | 9.11 |
 
 
-It seems reviewers are more productive on Librarything and Babeliom (both actually have similar reviewers behavior).  Howver the number of reviews per Book in Goodreads is larger by a scale factor (10X times)! (these numbers consider all reviews even duplicate one, see next point).
+It seems reviewers are more productive on Librarything and Babelio (both actually have very similar reviewers behavior).  However the number of reviews per Book in Goodreads is larger by a factor of 10! (these numbers consider all reviews, even duplicate ones).
 
 
 ### Most reviewed Books
@@ -42,58 +42,81 @@ The top 10 most reviewed book from my sample (combining all sites):
 
 | Book | Nb of reviews |
 | ---- | ---- |
-| book1 | 43242342 |
-| book2 | 43242342 |
+| The Hunger Games  |  7020 |
+| Twilight (The Twilight Saga, Book 1) |  5578 |
+| The Book Thief |  5155 |
+| Catching Fire |  5127 |
+| Harry Potter and the Sorcerer's Stone (Book 1) |  5082 |
+| The Girl With The Dragon Tattoo |  5027 |
+| Mockingjay |  5024 |
+| The Help |  4954 |
+| Divergent |  4873 |
+| The Guernsey Literary and Potato Peel Pie Society |  4858 |
+| Harry Potter and the Deathly Hallows |  4668 |
+| The Da Vinci Code |  4616 |
+| The Road |  4575 |
+| Pride and Prejudice |  4545 |
+| Gone Girl |  4436 |
+| The Giver |  4384 |
+| The Kite Runner |  4307 |
+| The Curious Incident of the Dog in the Night-Time  |  4291 |
+| 1984  |  4253 |
+| Water for Elephants: A Novel |  4230 |
 
 
 
 ### Average appreciation and correlation
 
-Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level between site.
+Whose site's reviewers give more favorable critic?  To answer that we need to compare average rating at <u>book</u> level.
 
-For simplicity, let's define the metric _score_ as the average rating given on a book per site (where rating was standardized on a 10 points scale).  This following gives the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
+For simplicity, let's define the metric _score_ as being the average rating for a book on a given site (after rating was standardized on a 10 points scale).  This following gives the average and standard deviation for _score_<sub>lt</sub> (Librarything), _score_<sub>gr</sub> (Goodreads) and _score_<sub>ba</sub> (Babelio):
 
 | Site | Avg | Std dev |
 | :---- | :----: | :----:|
-| _score_<sub>lt</sub> | 8.3  | 2.3 |  
-| _score_<sub>gr</sub> | 7.4  | 2.5 |
-| _score_<sub>ba</sub> | 5.3  | 1.2 |
+| _score_<sub>lt</sub> | 7.496  | 1.639 |  
+| _score_<sub>gr</sub> | 7.508  | 1.880 |
+| _score_<sub>ba</sub> | 6.987  | 2.386 |
 
-We see reviewer from Goodreads are slightly less harsh than LT by an average of 0.3 (rating was) ? whereas reviewer from GR are the least.....
-However, Lt's reviewer tend to be more alike given the smaller standard deviation...        
+Reviewers from both Goodreads and Librarything are very similar in this respect, whereas reviewers from Babelio are more harsh... However, before concluding to another French's reputation, let's note that the confidence level of this average is lower for Babelio (based on a smaller number of reviews) and also confirmed by its higher standard deviation.  
 
-Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient of our score variables by sites:
+Are reviewer's between different site in agreement with each other?  This can be answered by calculating correlation coefficient between score variables:
 
 | Site          | Librarything | Goodreads | Babelio |
 | :-----------  | :----------: | :--------:| :------:|
-| Librarything  | 1            | +0.3      |   +0.4  |
-| Goodreads     | --           | 1         |   - 0.4 |
+| Librarything  | 1            | +0.377    |   +0.145 |
+| Goodreads     | --           | 1         |   +0.18 |
 | Babelio       | --           |  --       |   1     |
+
+Yes all scores are positively correlated, with higher correlation between Librarything and Goodreads (probably more similar cultural background).  A bit surprise by the relative small level of correlation though?  
 
 
 ### Duplicated Reviews
 
-That one was more surprising!  Using these simple rules to identify duplicate reviews:
+That one was more surprising! Using the following simple rules, over 581K reviews were found to duplicates!
    - Only comparing reviews from same Work (logical)
-   - Comparing reviews with text of at least 100 characters long (avoid similar short reviews)
-   - Comparing reviews with text of similar size (&#177; +/- 8%, however this may reduce plagiarism detection)
-   - Flag reviews as duplicates when their **trigram** similarity is above 0.7?  (although this may seem small, most similar reviews have index larger than 0.9?)  
+   - Comparing reviews with text of at least 100 characters long (ignoring similar short reviews)
+   - Comparing reviews with text of similar size (&#177; +/- 8%, however this may reduce plagiarism detection where only a subset was copied)
+   - Flag reviews as duplicates when their **trigram** similarity index is above 0.7?  (although this may seem small, most similar reviews had index larger than 0.9?)  
 
-| Site source | Total nb of dupes | Avg dupes per Book | Ratio avg dupes per book over avg nb per book |
-|----|----|----|---|----|
-| Librarything | 32 | same | 30 | 300 |
-| Goodreads | 32 | same | 30 | 300 |
-| Babelio | 32 | same | 30 | 300 |
+| Metric  | Value |
+| Total nb of dupes | 581K<sup>*</sup> |
+| Avg dupes per Book | 2.89 |
+| Ratio (avg dupes/avg nb of reviews) per book | 2.6% |
 
-
-
+<sup>* </sup> here same reviews found twice count for 2 duplicates)
 
 These numbers are intriguing and encouraged further investigation.  So let's drill-down the analysis a bit further....
 
-Many reviews have duplicates so I tried to distinguish different cases:
-
 Are these duplicates within site or across sites?
 
+| Site          | Librarything | Goodreads | Babelio |
+| :-----------  | :----------: | :--------:| :------:|
+| Librarything  | 17K          | 215K      |   0.7K |
+| Goodreads     | --           | 60K        |   4K  |
+| Babelio       | --           |  --       |   2K    |
+
+
+Can we distinguish different cases:
 
 
 Duplicates assessment:
