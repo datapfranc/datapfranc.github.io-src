@@ -85,7 +85,7 @@ Are reviewer's between different site in agreement with each other?  This can be
 | Goodreads     | --           | 1         |   +0.18 |
 | Babelio       | --           |  --       |   1     |
 
-Yes all scores are positively correlated but not by much.  It seems reviewers give on average similar rating, but only agree moderately on which books are good or bad.  This is especially true between Babelio and the other sites, where cultural differences seems to be at play.     
+Yes all scores are positively correlated but not by much.  It seems reviewers give on average similar rating, but only agree moderately on which books are good or bad.  This is especially obvious between Babelio and other sites, where cultural differences seem to be at play.     
 
 
 ## Duplicated Reviews
@@ -94,18 +94,19 @@ Over **581K** reviews were identified as very similar!  These were found using t
 
    - Only comparing reviews from same Work (logical)
    - Comparing reviews with text of at least 100 characters long (ignoring similar short reviews)
-   - Comparing reviews with text of similar size (&#177; +/- 8%)
+   - Comparing reviews with text of similar size (&#177;8%)
    - Flag reviews as duplicates when their **trigram** [similarity index]({filename}How-to-Do-DI_part3.md) is above 0.7 (although this may seem small, most similar reviews had index larger than 0.9)
 
 | Metric  | Value |
 | ---- | ---- |
 | Total nb of duplicates<sup>*</sup> | 581K |
-| Avg duplicates per Book | 2.89 |
-| Ratio (avg duplicates/avg nb of reviews) per book | 2.6% |
+| Avg nb of reviews per Book | 110.1 |
+| Avg nb of duplicates per Book | 2.89 |
+| Ratio avg duplicates/avg reviews | 2.6% |
 
-<sup>* </sup>here 2 reviews identical count for 2 duplicates
+<sup>* </sup> When 2 reviews are considered similar, nb of duplicates count is 2.
 
-These numbers are intriguing and encouraged further investigation.  So let's drill-down the analysis a bit further...
+These numbers are important and encourage further investigation.  So let's drill-down the analysis a bit further...
 
 #### Are these duplicates within or across sites?
 
@@ -115,9 +116,9 @@ These numbers are intriguing and encouraged further investigation.  So let's dri
 | Goodreads     | --           | 60K        |   4K  |
 | Babelio       | --           |  --       |   2K    |
 
-(Number here are lower as identical 2 reviews are counted as only one duplicate).
+(Note: 2 reviews considered similar are counted as only one duplicate here).
 
-It seems like a large proportion are originating from users copying their reviews between Librarything and Goodreads.  
+It seems like a large proportion are originating from users copying their reviews between Librarything and Goodreads.
 
 Let's look at some examples to distinguish various cases:
 
