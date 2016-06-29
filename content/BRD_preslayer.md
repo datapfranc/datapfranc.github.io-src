@@ -1,7 +1,7 @@
 Title: Draft Example
 Date: 2016-6-22 13:35
 Tags: dataset
-Slug: draft
+Slug: brd_pl_intro
 Author: Martin Ouellet
 Status: draft
 

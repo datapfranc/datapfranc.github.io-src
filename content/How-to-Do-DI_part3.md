@@ -1,7 +1,7 @@
 Title: How to do data integration, BRD example (part3)
 Date: 2016-6-2 9:07
 Tags: BRD, data integration
-Slug: BRD_DI_part3
+Slug: brd_di_part3
 Author: Martin Ouellet
 Series: BRD-DI
 Series_index: 3
