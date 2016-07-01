@@ -13,19 +13,11 @@ In this post I'll define the physical data model to be used with a [Redshift](ht
 
 ### Redshift
 
-Redshift is "bla bla bla".  
-
-TODO: put the image Redshift under images/blog.
-
-
-Redshift's features such as Distribution type, Column-oriented storage and compression scheme all play an important role.  I've gathered more details on a separate [post](http://martin.ouellet.blogspot.ch/rrrr)) for those interested.
-
-
-
+Redshift is a Massively parallel processing (MPP) Cloud-based database suited for BI and analytics needs running on top of commodity hardware based architectures available from AWS.  Among its important features, we can name its Columnar storage, high compression data, running of query optimizer compiled code.  More info available [here](http://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html) and I've also gathered more details on a separate [post](http://martin-ouellet.blogspot.co.at/2016/07/redshift-cloud-based-data-warehousing.html) covering some aspects having influence on data modeling.
 
 ### Physical Data model
 
-Our integration layer was highly normalized for greater flexibility, and this will penalize Redshift data access performance critical to our Presentation layer.  So one change is to denormalize tables such as merging descriptive tables (ex. user_..) and association ones (ex. review_similarto, work_title, ..) into their parent entity.  Also, Redshift support of [data type](http://amazon.com/rdsdatatype) is more limited than Postgres, so for example all `UUID` and `TEXT` type will need to be changed.  Note that UUID are useful for data integration load as jobs can be parallelized with no dependency on surrogate keys lookup based on natural key, but much less useful to our Presentation layer.  
+BRD integration layer is highly normalized for flexibility, but this can penalize Redshift data access performance so important to Presentation layer.  So a first change is to denormalize tables such as merging descriptive tables (ex. user_..) and association ones (ex. review_similarto, work_title, ..) into their parent entity.  Also, Redshift support of [data type](http://amazon.com/rdsdatatype) is more limited than Postgres, so for example all `UUID` and `TEXT` type will need to be changed.  Note that UUID are useful for data integration load as jobs can be parallelized with no dependency on surrogate keys lookup based on natural key, but much less useful to our Presentation layer.  
 
 The `TEXT` type are converted to `VARCHAR` using data input to determine its size, while `UUID` are replaced by `BIGINT`.  
 For each table, we must also determine its Distribution type (using some assumption on expected frequent query join) and its Sort key, as well as the compression scheme of all attributes.
@@ -33,11 +25,11 @@ For each table, we must also determine its Distribution type (using some assumpt
 
 #### Review
 
-`REVIEW` table is, by far, our biggest table and needs to be distributed optimally.  Its distribution key should correspond to one FK that often gets used for joining another large table.  Two logical candidates are `book_id` for table `WORK` or `reviewer_id` for table `REVIEWER`.  At this point, it is quite difficult to know whether our analysis of reviews will be against users demographic or book information (or both), so without real utilization audit we'll have to decide arbitrarily... and that's ok:  one advantage of the layered-architecture is that we can always re-build  Presentation-layer following any changes of optimization goals (Integration-layer safely keeps our data)!
+`REVIEW` table is, by far, our biggest table and needs to be distributed optimally.  Its distribution key should correspond to one FK that often gets used for joining another large table.  Two logical candidates are `book_id` for table `WORK` or `reviewer_id` for table `REVIEWER`.  At this point, it is quite difficult to know whether our analysis of reviews will be against users demographic or book information (or both), so without real usage trend we'll have to decide arbitrarily... and that's ok:  one advantage of the layered-architecture is that we can always re-build Presentation-layer following any changes of optimization goals (Integration-layer safely keeps our data)!
 
-Let's assume `book_id` is the best candidate for this, and hence colocate reviews with their associated books data.  However, another good candidate would be `reviewer_id` but this can only be determined much later after .  The
+Let's assume `book_id` is the best candidate for this, and hence co-locate reviews with their associated books data.  
 
-We decide to sort rows based on review's date to optimize time-series chart.
+As for the sorting, we'll sort rows based on their review's date as a way to optimize time-series report.
 
 The compression chosen by Redshift was ....
 
@@ -137,11 +129,16 @@ sortkey(??)
 
 -- After data loaded, check out compression encoding chosen  
 
-
 ```
 
 
-### Other tables
+### Complete Data Model
+
+Ok without going over the details of all tables, let's just show a diagram of the full Presentation Data model:
 
 
-Languages, Site, Date, Tag ...
+
+
+
+
+Next step will be to populate it through Redshift load command and connect some kind of Client access tool for doing analytics.
