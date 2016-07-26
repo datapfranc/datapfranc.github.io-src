@@ -5,9 +5,9 @@ Slug: brd_basicstat
 Author: Martin Ouellet
 
 
-After a few weeks spent harvesting and integrating a sample of book reviews, it is time to share some statistics.  
+After a few weeks spent harvesting and integrating book reviews, it is time to share some statistics.  
 
-Over **22 millions** reviews have been harvested on about 300K books (I use the term Book here instead of Work).  I've started harvesting book sequentially (by id) and later processed them by popularity as a way to get more reviews.  Some Book catalogued in Librarything could not be found in other sites while others had no reviews.
+Over **22 millions** reviews have been harvested on a sample of roughly 300K books (I use the term Book here instead of Work).  I've started harvesting book sequentially (by id) and later processed them by popularity as a way to get more reviews.  Some Book catalogued in Librarything could not be found in other sites while others had no reviews.
 
 
 | Statistics | **Librarything** | **Goodreads** | **Babelio** |
@@ -90,7 +90,7 @@ Yes all scores are positively correlated but not by much.  It seems reviewers gi
 
 ## Duplicated Reviews
 
-Over **581K** reviews were identified as very similar!  These were found using the following simple rules:
+Over **581K** reviews were identified as very similar!  These were found using the following rules:
 
    - Only comparing reviews from same Work (logical)
    - Comparing reviews with text of at least 100 characters long (ignoring similar short reviews)
@@ -191,7 +191,7 @@ Example like these are taken from a back cover of a book (this one was from a Ch
 
 In summary, it seems the bulk of duplicates originate from people copying their reviews across sites (a large number also due to technical issues) :
 
-| Case/Site     | # of occurence |
+| Case/Site     | # of occurrence |
 | :-----------  | :----------: |
 | Case 1 (same date, username & site) | 47.3K |
 | Case 2 (same date & site, diff username) | 2.7K |

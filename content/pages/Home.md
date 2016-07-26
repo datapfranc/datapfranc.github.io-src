@@ -18,16 +18,11 @@ The project is speculating that DataPlateform**[^footnote]** giving access to cl
 
 This is considering:
 
-1. __Data Preparation__
-  * this step is costly but <u>mandatory</u> when integrating multi-source data and is better left to a dedicated and specialized team
-2. __Cloud-based cost model__
-  * with its zero initial investment and pay-per-usage policy, it will also be attractive in the data analytics domain
-3. __Cloud computing scalability__
-  * linear and near "infinite" scalability is needed to open analytical capability to much larger audience
-4. __Data asset integration__
-  * single source dataset has limited value by itself.. the famous saying "The whole is greater than the sum of its parts”
-5. __A bit of idealism!__
-  * Modern world is dense, interconnected and interdependent.. striving for more collaboration and sharing dataset should prevail over competitive argument!
+1. __Data Preparation__ this is costly but <u>mandatory</u> when integrating multi-source data and is better left to a dedicated and specialized team
+2. __Cloud-based cost model__ its zero initial investment and pay-per-usage policy, the Cloud will also be attractive to the data analytics domain
+3. __Cloud computing scalability__ linear and near "infinite" scalability is needed to open analytical capability to much larger audience
+4. __Data asset integration__ single source dataset has limited value by itself.. the famous saying "The whole is greater than the sum of its parts”
+5. __A bit of idealism!__  modern world is dense, interconnected and interdependent.. striving for more collaboration and sharing dataset should prevail over competitive argument!
 
 Refer to [context]({filename}2-Context.md) for more details.
 
