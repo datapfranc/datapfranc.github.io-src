@@ -1,18 +1,18 @@
-Title: BRD Presentation layer
+Title: Loading into Redshift
 Date: 2016-6-22 13:35
-Tags: dataset
-Slug: brd_pl_intro
+Tags: dataset, redshift
+Slug: brd_loading_rs
 Author: Martin Ouellet
 Status: draft
 
+This post will go through the steps needed to load data into Redshift using BRD presentation layer data.  We'll be using a common approach to do that but there are plenty alternatives, see [here](http://thelink) for more details.  We assume our presentation-layer data is already available (in flat files), however a number of ETL jobs (not covered) are responsible to generate these according to Business rules and transformation logic specified by our project. We rather focus on loading characteristics and mechanisms invlved with Redshift.
 
-The Presentation layer's role is to respond to all user needs for reporting, data analytics and front-end applications like visualization or dashboarding. The focus is to optimize read-access, as opposed to write-access. The challenge is to optimize read-access without knowing the exact data access pattern that will be triggered from users interactions.
 
-In this post, I'll define the physical data model created for a [Redshift](http://amazon.com/redshift) DWH Cloud target platform.  This implementation choice influences considerably the resulting physical data model.
+### Splitting input files
 
-### Redshift
+Redshift COPY command can take advantage of MPP to parallelize the loading of files. This requires us to split files as a multiple of number of slices present in the cluster.  Also recommended is to pre-sort data along the key order so that we can eliminate the need to `VACUUM`.  
 
-Redshift is a Massively parallel processing (MPP) Cloud-based database suited for BI and analytics needs running on top of commodity hardware based architectures available from AWS.  Among its features, we can highlight Columnar storage, high compression data, execution of query compiled code.  More info available [here](http://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html) and I've also gathered details on a separate [post](http://martin-ouellet.blogspot.co.at/2016/07/redshift-cloud-based-data-warehousing.html) covering key aspects influencing data modeling.
+
 
 
 ### Physical Data model
