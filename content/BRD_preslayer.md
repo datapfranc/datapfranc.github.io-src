@@ -7,13 +7,13 @@ Status: draft
 
 ### Presentation layer
 
-The Presentation layer has the important role to respond to user needs for reporting, data analytics and other visualization or dashboarding applications. This layer's goal is to optimize read-access in the most flexible way as we can hardly predict all type of ad-hoc queries later triggered from these applications.
+The Presentation layer's role is to respond to all user needs for reporting, data analytics and other front-end applications like visualization or dashboard. Its goal is thus to optimize read-access (as opposed to write-access) in the most flexible way as it is impossible to predict all data access pattern from users interacting with these applications.
 
-In this post I'll define the physical data model to be used with a [Redshift](http://amazon.com/redshift) DWH Cloud platform.  This platform implementation choice is important and influence considerably our physical data model.
+In this post I'll define the physical data model to be used with a [Redshift](http://amazon.com/redshift) DWH Cloud platform.  This platform implementation choice is important and influences considerably our physical data model.
 
 ### Redshift
 
-Redshift is a Massively parallel processing (MPP) Cloud-based database suited for BI and analytics needs running on top of commodity hardware based architectures available from AWS.  Among its important features, we can name its Columnar storage, high compression data, running of query optimizer compiled code.  More info available [here](http://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html) and I've also gathered more details on a separate [post](http://martin-ouellet.blogspot.co.at/2016/07/redshift-cloud-based-data-warehousing.html) covering some aspects having influence on data modeling.
+Redshift is a Massively parallel processing (MPP) Cloud-based database suited for BI and analytics needs running on top of commodity hardware based architectures available from AWS.  Among its features, we can highlight Columnar storage, high compression data, execution of query compiled code.  More info available [here](http://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html) and I've also gathered details on a separate [post](http://martin-ouellet.blogspot.co.at/2016/07/redshift-cloud-based-data-warehousing.html) covering key aspects influencing data modeling.
 
 ### Physical Data model
 
