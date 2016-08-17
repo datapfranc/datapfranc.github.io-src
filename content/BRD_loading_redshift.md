@@ -36,8 +36,6 @@ Finally before being able to connect to the cluster, we need to configure author
 At this stage, we can finally connect to the Cluster using various client like the terminal-based [psql](http://www.postgresql.org/docs/8.4/static/app-psql.html) or any GUI like SQuirreL SQL or Workbench/J.  The connection details to provide are the host (the endpoint defined previously), the userid (our master username), the port and the database name we decided to use.  
 
 
-
-
 ### Loading into Redshift
 
 Assuming we have our physical data model created in the database (DDL commands executed) we can start loading data into Redshift (link to previous post).
@@ -45,40 +43,114 @@ Assuming we have our physical data model created in the database (DDL commands e
 The recommended approach for loading flat files is to first dump the files into a [S3 bucket] (http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html), i.e. an URI named resource that stores files onto Amazon Cloud storage service.  We could use the same AWS account created to launch our Amazon Redshift cluster (credentials: an access key ID
 and secret access key).
 
+#### Splitting input files
+
+COPY command can take advantage of MPP to parallelize the loading of large files. This requires to split input files as a multiple of number of slices present in our cluster.  For example, this command would split 'review.txt' files into chunk of 500MB with prefix 'review_part_' :
+
+```bash
+split -b 100m review.txt review_part_
+```
+
+#### COPY command
 
 The generic [`LOAD`](http://docs.aws.amazon.com/redshift/latest/dg/r_COPY.html) command supports various input type (S3 bucket, DynamoDB table, local files, remote files accessed though SSH...) and offers a array of parameters to tune and customize the load.  
 
 For instance, for loading DIM_DATE:
 
 ```sql
-copy dim_date from 's3://awssample/dimdate.txt'
-credentials 'aws_iam_role=arn:aws:iam::462971347104:role/readonly_redshift_role'
+copy dim_date from 's3://<name-of-bucket>/<path-to-file>'
+credentials 'aws_iam_role=<iam-role-identifier>'
 delimiters '|' region 'eu-central-1a';
+
+--Check loading errors at:
+select * from stl_load_errors
+
+```
+
+In case of failure, we can check and debug the errors logged at `STL_LOAD_ERRORS`.  Also, because we used the `COPY` command Redshift determined automatically the compression encoding most suited to each attributes.  
+
+
+#### Review table settings
+
+Once all data was loaded, we can review and check all settings and table physical statistics with this query:
+
+```sql
+select schema schemaname
+        , "table" tablename
+        , table_id tableid
+        , size size_in_mb
+        , case when diststyle not in ('EVEN','ALL') then 1 else 0 end has_dist_key
+        , case when sortkey1 is not null then 1 else 0 end has_sort_key
+        , case when encoded = 'Y' then 1 else 0 end has_col_encoding
+        , cast(max_blocks_per_slice - min_blocks_per_slice as FLOAT) / greatest(nvl(min_blocks_per_slice,0)::int,1) ratio_skew_across_slices
+        , cast(100*dist_slice as FLOAT) /(select count(distinct slice) from stv_slices) pct_slices_populated
+from svv_table_info ti
+  join
+(select tbl
+        , min(c) as min_blocks_per_slice
+        , max(c) as max_blocks_per_slice
+        , count(distinct slice) dist_slice
+from (select b.tbl, b.slice, count(1) as c from stv_blocklist b group by 1,2)
+where tbl in (select table_id from svv_table_info)
+group by tbl) iq on iq.tbl = ti.table_id;
+```
+
+We can also check the compression encoding chosen by Redshift for each column of a particular table:
+
+```sql
+select * from pg_table_def where tablename = 'review';
+```
+
+
+
+### Running queries
+
+At this point, let's run a few queries.
+
+
+
+
+Remind that no sort key are yet defined for any tables in our sub-optimal physical design.  To optimize this, let's add sort key as the following :
+
+
+
+
+
+After re-running the Query a multiple times, we can easily check the impact of our optimization by viewing the queries auditing info on logged by Redshit:
+
+
+```sql
+select starttime, querytxt, datediff(seconds, starttime, endtime) as elapse_sec
+from stl_query
+where starttime >= '2016-08-17 10:00' and endtime < '2016-08-17 23:59'
+and database = 'brd'
+order by starttime
+;
 ```
 
 
 
 
-#### Splitting input files
 
-COPY command can take advantage of MPP to parallelize the loading of large files. This requires to split input files as a multiple of number of slices present in our cluster.  For example, this command would split 'dim_book.txt' files into chunk of 100MB files all prefixed by 'dimbook_split' :
-
-```bash
-split -b 100m dim_book.txt dimbook_split
-```
+Next, we'll try the MPP capability by configuring our Cluster with 4 nodes instead of 1 as currently set.
 
 
+Result of different Query response time for different set-up.  Response time are calculated by averaging same queries executed non- sequentially for 5 times
 
+| Query | **1 Node dc1.large** | **1 Node dc1.large** with sort-key | **4 Nodes dc1.large** with sort-key |
+|----|----|----|---|
+| Trend rating | 1916 |  |  |
+| Cultural difference | 3043 |  |  |
+| Reader info | 9255 |  |  |
+| Helpful difference rating | 1649 |  |  |
+| Stats per site | 2354 |  |  |
+| Best Author | 5798 |  |  |
 
-
-
-### About text attributes
-
-
-The default expected date format is 'YYYY-MM-DD', if you're exporting data from Postgres, it uses same default so noting to do, otherwise you'll have to define the data conversion parameter: `DATEFORMAT [AS] {'dateformat_string' | 'auto' }`.  do as it  
-
+For those curious, here's some of the results of these interesting queries:
 
 
 
 
-Also recommended is to pre-sort data along the key order so that we can eliminate the need to `VACUUM`.  
+
+
+in milliseconds.

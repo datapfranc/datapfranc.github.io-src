@@ -82,7 +82,6 @@ diststyle ALL
 ;
 ```
 
-
 #### Book
 
 `BOOK` table holds informational data on Book reviewed. For reasons explained in `REVIEW` table, we chose `id` as distribution key. We also de-normalize different language titles pivoted by a few popular languages. This allows to do search query by title leveraging all cluster nodes.    
@@ -90,7 +89,7 @@ diststyle ALL
 We'll also sort rows along `title_ori` which should be used frequently as predicate.     
 
 ```sql
-create table presentation.book (
+create table presentation.dim_book (
     id int primary key,
     title_ori text,
     ori_lang_code char(3),
@@ -111,7 +110,6 @@ diststyle KEY distkey (book_id)
 sortkey(title_ori)
 ;
 ```
-
 
 #### Reviewer
 
@@ -134,5 +132,25 @@ diststyle key distkey (id)
 sortkey(birth_year)
 ;
 ```
+
+
+### Tuning parameters summary
+
+The following table summarizes the choice of distribution style and sort key (not used at this point, but TODO later for optimization) for all tables.
+
+|Table name|Sort key|Distribution style|
+|:----|----|----|
+|Dim_author| name | ALL |
+|Rel_author| n.a. | KEY (book_id) |
+|Dim_book| n.a. (should be changed) | KEY (book_id) |
+|Dim_date| n.a. (should be changed) | ALL |
+|Dim_language| n.a. | ALL |
+|Dim_mds| n.a. (should be changed) | ALL |
+|Dim_reviewer| n.a. (should be changed) | KEY (reviewer_id) |
+|Dim_site| n.a. | ALL |
+|Dim_tag| n.a. (should be changed) | ALL |
+|Rel_tag|  |  KEY (book_id) |
+|Review| n.a. (should be changed review_date) | by key (book_id) |
+
 
 Next step will be to populate it through Redshift load command and applying our business rules transformation logic. To be covered in a separate post.
