@@ -38,7 +38,7 @@ Finally before being able to connect to the cluster, we need to configure author
 At this stage, we can finally connect to the Cluster using various client like the terminal-based [psql](http://www.postgresql.org/docs/8.4/static/app-psql.html) or any GUI like SQuirreL SQL or Workbench/J.  The connection details to provide are the host (the endpoint defined previously), the userid (our master username), the port and the database name we decided to use.  
 
 
-1 NODE dc1.large
+1 NODE dc1.large  or 4 Nodes (all nodes have same spec) :
 Current Node Type : 	dc1.large
 CPU :    	7 EC2 Compute Units (2 virtual cores) per node
 Memory per node : 	15 GiB per node
@@ -127,7 +127,7 @@ Remind that no sort key are yet defined for any tables in our sub-optimal physic
 
 
 
-After re-running the Query a multiple times, we can easily check the impact of our optimization by viewing the queries auditing info on logged by Redshit:
+After re-running the Query a multiple times, we can easily check the impact of our optimization by viewing the queries auditing info on logged by Redshift:
 
 
 ```sql
@@ -156,6 +156,9 @@ Result of different Query response time for different set-up.  Response time are
 
 Note: Response time are in milliseconds.
 
+Note2:  I actually kill/spawn/re-load a new Cluster with 4 nodes to do this perf comparison.  I realized after, that I could have simply resize my 1 Node cluster directly through the drop-down menu Cluster/Resize ... and let Redshift does this automatically (what a time savor)...
+
+The only constraint of doing this way: "Warning: Resizing the cluster will cause it to be restarted into read-only mode for the duration of the resize operation. All currently executing queries and database connections on the cluster will be terminated when the resize operation begins and again when it is complete"
 
 
 For those curious, here's some of the results of these interesting queries:
