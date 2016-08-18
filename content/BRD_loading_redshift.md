@@ -30,10 +30,22 @@ Once we have our pre-requisite cleared, we can spawn a new Cluster using the Ama
   - **IAM role** associated with the cluster
       * Here we set the role explained in pre-requisite that lets Redshift accessing S3 in read-only
 
+I do not provide more details configuration info, but overall the AWS and Redshift web UI is very clear and user friendly and things are easily configured straight from the web app!  It takes 1 or 2 minutes to create and laucnh your Cluster... pretty cool stuff!!  
+
 Finally before being able to connect to the cluster, we need to configure authorization by defining a [security group](http://docs.aws.amazon.com/redshift/latest/gsg/rs-gsg-authorize-cluster-access.html). Different parameters like protocol, port range and connecting IP inbound rules need to be set and vary slightly depending on the type of platform created earlier (either a classic or a VPC).
 
 
 At this stage, we can finally connect to the Cluster using various client like the terminal-based [psql](http://www.postgresql.org/docs/8.4/static/app-psql.html) or any GUI like SQuirreL SQL or Workbench/J.  The connection details to provide are the host (the endpoint defined previously), the userid (our master username), the port and the database name we decided to use.  
+
+
+1 NODE dc1.large
+Current Node Type : 	dc1.large
+CPU :    	7 EC2 Compute Units (2 virtual cores) per node
+Memory per node : 	15 GiB per node
+Storage Disk  : 	160GB SSD storage per node
+I/O performance : Moderate
+Platform Processor architecture :  	64-bit
+
 
 
 ### Loading into Redshift
@@ -109,8 +121,7 @@ At this point, let's run a few queries.
 
 
 
-
-Remind that no sort key are yet defined for any tables in our sub-optimal physical design.  To optimize this, let's add sort key as the following :
+Remind that no sort key are yet defined for any tables in our sub-optimal physical design.  To optimize this, we could also add sort-key but for now it is more interesting to see the impact on adding cluster nodes ...
 
 
 
@@ -129,28 +140,22 @@ order by starttime
 ```
 
 
-
-
-
 Next, we'll try the MPP capability by configuring our Cluster with 4 nodes instead of 1 as currently set.
 
 
 Result of different Query response time for different set-up.  Response time are calculated by averaging same queries executed non- sequentially for 5 times
 
-| Query | **1 Node dc1.large** | **1 Node dc1.large** with sort-key | **4 Nodes dc1.large** with sort-key |
+| Query | **1 Node dc1.large** | **4 Nodes dc1.large** cluster | **Baseline commodity server (iMAC ...)** |
 |----|----|----|---|
-| Trend rating | 1916 |  |  |
-| Cultural difference | 3043 |  |  |
-| Reader info | 9255 |  |  |
-| Helpful difference rating | 1649 |  |  |
-| Stats per site | 2354 |  |  |
-| Best Author | 5798 |  |  |
+| Trend rating | 1916 | 498  |  |
+| Cultural difference | 3043 | 433 |  |
+| Reader info | 9255 | 2779 |  |
+| Helpful difference rating | 1649 | 508 |  |
+| Stats per site | 2354 | 553 |  |
+| Best Author | 5798 | 1386 |  | |
+
+Note: Response time are in milliseconds.
+
+
 
 For those curious, here's some of the results of these interesting queries:
-
-
-
-
-
-
-in milliseconds.
