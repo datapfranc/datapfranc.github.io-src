@@ -5,7 +5,7 @@ Slug: brd_loading_rs
 Author: Martin Ouellet
 <!-- Status: draft -->
 
-This post will go through the steps needed to set-up a new Redshift cluster and get data into it.  We'll be using a standard approach but there are many  alternatives, see [here](http://thelink) for more details.  For the sake of simplicity, we assume a number of ETL jobs already exist to generate the presentation-layer data as flat files.  In real life, these ETL jobs would hold and maintain our set of Business rules and transformation logic required by our project, but for now we only focus on loading mechanisms involved with Redshift.
+This post will go through the steps needed to set-up a new Redshift cluster and get data into it.  We'll be using a standard approach but there are many alternatives, see [here](https://www.blendo.co/amazon-redshift-guide-data-analyst/import-and-export-data/load-data-into-amazon-redshift/) for more details.  For the sake of simplicity, we assume a number of ETL jobs already exist to generate the presentation-layer data as flat files.  In real life, these ETL jobs would hold and maintain our set of Business rules and transformation logic required by our project, but for now we only focus on loading mechanisms involved with Redshift.
 
 ### Setting up an Amazon Redshift Cluster
 
@@ -25,14 +25,13 @@ Once we have our pre-requisite cleared, we can spawn a new Cluster using the Ama
       * Dense storage suited for large data workloads based on HDD storage: **DS1** & **DS2** (both have same storage but DS2 has more RAM/CPU) with different sizes (xlarge and 8xlarge)
       * Dense compute suited for performance intensive workloads based on SDD storage: **DC1** with different size (large and 8xlarge)
   - Cluster type (single or multiple nodes)
-  - Some other advanced parameters like type of Platform (EC2-Classic and EC2-VPC), Encryption, CloudWatch alarm, ...(more info here).
+  - Some other advanced parameters like type of Platform (EC2-Classic and EC2-VPC), Encryption, CloudWatch alarm, etc.
   - **IAM role** associated with the cluster
       * Here we set the role explained in pre-requisite that lets Redshift accessing S3 in read-only
 
-I do not provide more details configuration info, but overall the AWS and Redshift web UI is very clear and user friendly and things are easily configured straight from the web app!  It takes 1 or 2 minutes to create and laucnh your Cluster... pretty cool stuff!!  
+I do not provide more details configuration info, but overall the AWS and Redshift web UI is very clear and user friendly and things are easily configured straight from the web app!  It takes 1 or 2 minutes to create and launch your Cluster... pretty cool stuff!!  
 
 Finally before being able to connect to the cluster, we need to configure authorization by defining a [security group](http://docs.aws.amazon.com/redshift/latest/gsg/rs-gsg-authorize-cluster-access.html). Different parameters like protocol, port range and connecting IP inbound rules need to be set and vary slightly depending on the type of platform created earlier (either a classic or a VPC).
-
 
 At this stage, we can finally connect to the Cluster using various client like the terminal-based [psql](http://www.postgresql.org/docs/8.4/static/app-psql.html) or any GUI like SQuirreL SQL or Workbench/J.  The connection details to provide are the host (the endpoint defined previously), the userid (our master username), the port and the database name we decided to use.  
 
@@ -49,8 +48,7 @@ Platform Processor architecture :  	64-bit
 
 Assuming we have our physical data model created in the database (DDL commands executed) we can start loading data into Redshift (link to previous post).
 
-The recommended approach for loading flat files is to first dump the files into a [S3 bucket] (http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html), i.e. an URI named resource that stores files onto Amazon Cloud storage service.  We could use the same AWS account created to launch our Amazon Redshift cluster (credentials: an access key ID
-and secret access key).
+The recommended approach for loading flat files is to first dump the files into a [S3 bucket] (http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html), i.e. an URI named resource that stores files onto Amazon Cloud storage service.  We could use the same AWS account created to launch our Amazon Redshift cluster (credentials: an access key ID and secret access key).
 
 #### Splitting input files
 
@@ -143,6 +141,6 @@ Result of different Query response time for different set-up.  Response time are
 
 Note: Response time are in milliseconds.
 
-Note2:  I actually kill/spawn/re-load a new Cluster with 4 nodes to do this perf comparison.  I realized after, that I could have simply resize my 1 Node cluster directly through the drop-down menu Cluster/Resize ... and let Redshift does this automatically (what a time savor)...
+Note2:  I actually kill/spawn/re-load a new Cluster with 4 nodes to do this perf comparison.  I realized after, that I could have simply resize my 1 Node cluster directly through the drop-down menu Cluster/Resize ... and let Redshift does this automatically (big time saving).
 
 The only constraint of doing this way: "Warning: Resizing the cluster will cause it to be restarted into read-only mode for the duration of the resize operation. All currently executing queries and database connections on the cluster will be terminated when the resize operation begins and again when it is complete"
