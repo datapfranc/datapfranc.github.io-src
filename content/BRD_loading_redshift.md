@@ -1,12 +1,11 @@
 Title: Loading into Redshift
-Date: 2016-6-22 13:35
+Date: 2016-07-07 17:12
 Tags: dataset, redshift
 Slug: brd_loading_rs
 Author: Martin Ouellet
-Status: draft
+<!-- Status: draft -->
 
 This post will go through the steps needed to set-up a new Redshift cluster and get data into it.  We'll be using a standard approach but there are many  alternatives, see [here](http://thelink) for more details.  For the sake of simplicity, we assume a number of ETL jobs already exist to generate the presentation-layer data as flat files.  In real life, these ETL jobs would hold and maintain our set of Business rules and transformation logic required by our project, but for now we only focus on loading mechanisms involved with Redshift.
-
 
 ### Setting up an Amazon Redshift Cluster
 
@@ -45,8 +44,6 @@ Memory per node : 	15 GiB per node
 Storage Disk  : 	160GB SSD storage per node
 I/O performance : Moderate
 Platform Processor architecture :  	64-bit
-
-
 
 ### Loading into Redshift
 
@@ -113,19 +110,11 @@ We can also check the compression encoding chosen by Redshift for each column of
 select * from pg_table_def where tablename = 'review';
 ```
 
-
-
 ### Running queries
 
 At this point, let's run a few queries.
 
-
-
 Remind that no sort key are yet defined for any tables in our sub-optimal physical design.  To optimize this, we could also add sort-key but for now it is more interesting to see the impact on adding cluster nodes ...
-
-
-
-
 
 After re-running the Query a multiple times, we can easily check the impact of our optimization by viewing the queries auditing info on logged by Redshift:
 
@@ -139,9 +128,7 @@ order by starttime
 ;
 ```
 
-
 Next, we'll try the MPP capability by configuring our Cluster with 4 nodes instead of 1 as currently set.
-
 
 Result of different Query response time for different set-up.  Response time are calculated by averaging same queries executed non- sequentially for 5 times
 
@@ -159,6 +146,3 @@ Note: Response time are in milliseconds.
 Note2:  I actually kill/spawn/re-load a new Cluster with 4 nodes to do this perf comparison.  I realized after, that I could have simply resize my 1 Node cluster directly through the drop-down menu Cluster/Resize ... and let Redshift does this automatically (what a time savor)...
 
 The only constraint of doing this way: "Warning: Resizing the cluster will cause it to be restarted into read-only mode for the duration of the resize operation. All currently executing queries and database connections on the cluster will be terminated when the resize operation begins and again when it is complete"
-
-
-For those curious, here's some of the results of these interesting queries:

@@ -17,12 +17,10 @@ Redshift is a Massively parallel processing (MPP) Cloud-based database suited fo
 
 BRD integration layer is highly normalized and this can penalize Redshift data access performance.  So we should first de-normalize our model by merging descriptive tables (ex. user_*) and association ones (ex. review_similarto, work_title, ..) into their parent entity.
 
-From the diagram below, we can see that the physical model is much simpler than the integration layer's model. That's typical of presentation layer that should also be easily interpreted and understood by a larger audience.
-
+Looking at the physical data model of the integration layer's model (see below), we see it is a bit complex and not suited to any end-user.
 <img src='/images/blog/BRD_pdm_integration.png' width='100%' alt='Physical Data model'/>
 
-
-We have one central fact table `REVIEW` storing facts `rating` and `nb_likes` (and raw review text) for each review, surrounded by dimensions `DIM_DATE`, `DIM_REVIEWER`, `DIM_BOOK` and `DIM_SITE`. We also have tables `REL_TAG` and `REL_AUTHOR` capturing the more complex many-to-many relationship between a review and dimensions `DIM_TAG` and `DIM_AUTHOR` respectively.
+However Presentation layer should be easily interpreted and understood by a much larger audience, hence simpler.  We have one central fact table `REVIEW` storing facts `rating` and `nb_likes` (and raw review text) for each review, surrounded by dimensions `DIM_DATE`, `DIM_REVIEWER`, `DIM_BOOK` and `DIM_SITE`. We also have tables `REL_TAG` and `REL_AUTHOR` capturing the more complex many-to-many relationship between a review and dimensions `DIM_TAG` and `DIM_AUTHOR` respectively.
 
 Other changes required are due to Redshift support limitation of [data type](http://docs.aws.amazon.com/redshift/latest/dg/c_Supported_data_types.html) compared to Potgres. The `TEXT` type are converted to `VARCHAR` using data input to determine its size.  Size is based on bytes and not character, hence to determine size required use SQL function `octet_length()` instead of `char_length()`. Also, `UUID` are replaced by `BIGINT` (note that UUID are useful for data integration where load can be parallelized without dependency on surrogate keys lookup, but not so useful for our Presentation layer).
 
