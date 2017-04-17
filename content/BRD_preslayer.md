@@ -3,8 +3,6 @@ Date: 2016-6-22 13:35
 Tags: dataset
 Slug: brd_pl_intro
 Author: Martin Ouellet
-Status: draft
-
 
 The Presentation layer's role is to respond to all user needs for reporting, data analytics and front-end applications like visualization or dashboarding. The focus is to optimize read-access, as opposed to write-access. The challenge is to optimize read-access without knowing the exact data access pattern that will be triggered from users interactions.
 
@@ -136,21 +134,22 @@ sortkey(birth_year)
 
 ### Tuning parameters summary
 
-The following table summarizes the choice of distribution style and sort key (not used at this point, but TODO later for optimization) for all tables.
+The following table summarizes the choice of distribution style and sort key (not used at this point, but TODO later for optimization) for all tasbles.
 
 |Table name|Sort key|Distribution style|
 |:----|----|----|
 |Dim_author| name | ALL |
 |Rel_author| n.a. | KEY (book_id) |
-|Dim_book| n.a. (should be changed) | KEY (book_id) |
-|Dim_date| n.a. (should be changed) | ALL |
+|Dim_book| note* | KEY (book_id) |
+|Dim_date| note* | ALL |
 |Dim_language| n.a. | ALL |
-|Dim_mds| n.a. (should be changed) | ALL |
-|Dim_reviewer| n.a. (should be changed) | KEY (reviewer_id) |
+|Dim_mds| note* | ALL |
+|Dim_reviewer| note* | KEY (reviewer_id) |
 |Dim_site| n.a. | ALL |
-|Dim_tag| n.a. (should be changed) | ALL |
+|Dim_tag| note* | ALL |
 |Rel_tag|  |  KEY (book_id) |
-|Review| n.a. (should be changed review_date) | by key (book_id) |
-
+|Review| note* | by key (book_id) |
+s
+*these would be set following realistic data access usage
 
 Next step will be to populate it through Redshift load command and applying our business rules transformation logic. To be covered in a separate post.
