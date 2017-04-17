@@ -19,7 +19,7 @@ BRD integration layer is highly normalized and this can penalize Redshift data a
 
 From the diagram below, we can see that the physical model is much simpler than the integration layer's model. That's typical of presentation layer that should also be easily interpreted and understood by a larger audience.
 
-<img src='/images/blog/BRD_prm_integration.png' width='35%' alt='Physical Data model'/>
+<img src='/images/blog/BRD_pdm_integration.png' width='35%' alt='Physical Data model'/>
 
 
 We have one central fact table `REVIEW` storing facts `rating` and `nb_likes` (and raw review text) for each review, surrounded by dimensions `DIM_DATE`, `DIM_REVIEWER`, `DIM_BOOK` and `DIM_SITE`. We also have tables `REL_TAG` and `REL_AUTHOR` capturing the more complex many-to-many relationship between a review and dimensions `DIM_TAG` and `DIM_AUTHOR` respectively.
