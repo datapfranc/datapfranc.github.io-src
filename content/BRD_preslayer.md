@@ -134,22 +134,22 @@ sortkey(birth_year)
 
 ### Tuning parameters summary
 
-The following table summarizes the choice of distribution style and sort key (not used at this point, but TODO later for optimization) for all tasbles.
+The following table summarizes the choice of distribution style and sort key (not used at this point, but TODO later for optimization) for all tables.
 
 |Table name|Sort key|Distribution style|
 |:----|----|----|
 |Dim_author| name | ALL |
 |Rel_author| n.a. | KEY (book_id) |
-|Dim_book| note* | KEY (book_id) |
-|Dim_date| note* | ALL |
+|Dim_book| note | KEY (book_id) |
+|Dim_date| note | ALL |
 |Dim_language| n.a. | ALL |
-|Dim_mds| note* | ALL |
+|Dim_mds| note | ALL |
 |Dim_reviewer| note* | KEY (reviewer_id) |
 |Dim_site| n.a. | ALL |
-|Dim_tag| note* | ALL |
+|Dim_tag| note | ALL |
 |Rel_tag|  |  KEY (book_id) |
-|Review| note* | by key (book_id) |
-s
-*these would be set following realistic data access usage
+|Review| note | by key (book_id) |
+
+note: these would be set following realistic data access usage
 
 Next step will be to populate it through Redshift load command and applying our business rules transformation logic. To be covered in a separate post.
